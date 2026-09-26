@@ -1,0 +1,1363 @@
+class Khefest.Core.Assets.AssetManager : IAssetContext, IDisposable
+  ctor AssetManager(string rootDirectory, ResourceManager resources, IServiceProvider services)
+  prop ResourceManager Resources { get; }
+  prop string RootDirectory { get;set; }
+  prop IServiceProvider Services { get; }
+  method void Dispose()
+  method T GetService<T>()
+  method T Load<T>(string assetPath)
+  method Task<T> LoadAsync<T>(string assetPath)
+  method void RegisterLoader<T>(IAssetLoader<T> loader)
+  method bool Unload(string assetPath)
+  method void UnloadAll()
+interface Khefest.Core.Assets.IAssetContext
+  prop ResourceManager Resources { get; }
+  prop IServiceProvider Services { get; }
+  method T GetService<T>()
+interface Khefest.Core.Assets.IAssetLoader
+  prop Type AssetType { get; }
+  prop IReadOnlyList<string> SupportedExtensions { get; }
+interface Khefest.Core.Assets.IAssetLoader`1 : IAssetLoader
+  method T Load(Stream stream, string assetPath, IAssetContext context)
+  method Task<T> LoadAsync(Stream stream, string assetPath, IAssetContext context)
+class Khefest.Core.Configuration.GraphicsConfig : IEquatable<GraphicsConfig>
+  ctor GraphicsConfig()
+  prop bool EnableMultithreadedSubmission { get;set; }
+  prop bool EnableValidationLayers { get;set; }
+  prop bool PreferHighPerformanceAdapter { get;set; }
+  prop int PreferredAdapterIndex { get;set; }
+  method GraphicsConfig <Clone>$()
+  method bool Equals(GraphicsConfig other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Core.Configuration.KhefestConfig : IEquatable<KhefestConfig>
+  ctor KhefestConfig()
+  prop IReadOnlyDictionary<string, string> CustomSettings { get; }
+  prop GraphicsConfig Graphics { get;set; }
+  prop LoggingConfig Logging { get;set; }
+  prop MemoryConfig Memory { get;set; }
+  prop WindowConfig Window { get;set; }
+  method KhefestConfig <Clone>$()
+  method bool Equals(KhefestConfig other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string GetSetting(string key)
+  method string ToString()
+  method KhefestConfig WithSetting(string key, string value)
+class Khefest.Core.Configuration.KhefestConfigBuilder
+  ctor KhefestConfigBuilder()
+  method KhefestConfig Build()
+  method KhefestConfigBuilder ConfigureGraphics(Func<GraphicsConfig, GraphicsConfig> configure)
+  method KhefestConfigBuilder ConfigureLogging(Func<LoggingConfig, LoggingConfig> configure)
+  method KhefestConfigBuilder ConfigureMemory(Func<MemoryConfig, MemoryConfig> configure)
+  method KhefestConfigBuilder ConfigureWindow(Func<WindowConfig, WindowConfig> configure)
+  method KhefestConfigBuilder Set(string key, string value)
+class Khefest.Core.Configuration.LoggingConfig : IEquatable<LoggingConfig>
+  ctor LoggingConfig()
+  prop bool EnableConsoleSink { get;set; }
+  prop bool EnableMemorySink { get;set; }
+  prop int MemorySinkCapacity { get;set; }
+  prop LogLevel MinimumLevel { get;set; }
+  method LoggingConfig <Clone>$()
+  method bool Equals(LoggingConfig other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Core.Configuration.MemoryConfig : IEquatable<MemoryConfig>
+  ctor MemoryConfig()
+  prop bool AutoMemManagement { get;set; }
+  prop bool EnableLeakTracking { get;set; }
+  prop long GpuMemoryBudgetBytes { get;set; }
+  method MemoryConfig <Clone>$()
+  method bool Equals(MemoryConfig other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Core.Configuration.WindowConfig : IEquatable<WindowConfig>
+  ctor WindowConfig()
+  prop int Height { get;set; }
+  prop WindowMode Mode { get;set; }
+  prop bool Resizable { get;set; }
+  prop int TargetFps { get;set; }
+  prop string Title { get;set; }
+  prop bool VSync { get;set; }
+  prop int Width { get;set; }
+  method WindowConfig <Clone>$()
+  method bool Equals(Object obj)
+  method bool Equals(WindowConfig other)
+  method int GetHashCode()
+  method string ToString()
+enum Khefest.Core.Configuration.WindowMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field WindowMode BorderlessFullscreen
+  field WindowMode ExclusiveFullscreen
+  field int value__
+  field WindowMode Windowed
+class Khefest.Core.Errors.KhefestAssetException : ISerializable
+  ctor KhefestAssetException(KhefestErrorCode errorCode, string assetPath, string message, Exception innerException)
+enum Khefest.Core.Errors.KhefestErrorCode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field KhefestErrorCode AlreadyInitialized
+  field KhefestErrorCode ArgumentNull
+  field KhefestErrorCode ArgumentOutOfRange
+  field KhefestErrorCode AssetCorrupted
+  field KhefestErrorCode AssetFormatNotSupported
+  field KhefestErrorCode AssetLoadFailed
+  field KhefestErrorCode AssetNotFound
+  field KhefestErrorCode AudioDeviceInitFailed
+  field KhefestErrorCode AudioPlaybackFailed
+  field KhefestErrorCode ConfigurationInvalid
+  field KhefestErrorCode GraphicsCommandSubmissionFailed
+  field KhefestErrorCode GraphicsDeviceCreationFailed
+  field KhefestErrorCode GraphicsDeviceLost
+  field KhefestErrorCode GraphicsDeviceNotSupported
+  field KhefestErrorCode GraphicsFeatureNotSupported
+  field KhefestErrorCode GraphicsOutOfGpuMemory
+  field KhefestErrorCode GraphicsPipelineCreationFailed
+  field KhefestErrorCode GraphicsPresentationFailed
+  field KhefestErrorCode GraphicsResourceBindingFailed
+  field KhefestErrorCode GraphicsShaderCompilationFailed
+  field KhefestErrorCode GraphicsSwapchainCreationFailed
+  field KhefestErrorCode GraphicsSynchronizationFailed
+  field KhefestErrorCode InitializationFailed
+  field KhefestErrorCode InputDeviceNotFound
+  field KhefestErrorCode InvalidOperation
+  field KhefestErrorCode None
+  field KhefestErrorCode NotInitialized
+  field KhefestErrorCode NotSupported
+  field KhefestErrorCode OutOfMemory
+  field KhefestErrorCode PlatformDisplayError
+  field KhefestErrorCode PlatformDpiError
+  field KhefestErrorCode PlatformMessageLoopError
+  field KhefestErrorCode PlatformNativeInteropError
+  field KhefestErrorCode PlatformWindowAlreadyExists
+  field KhefestErrorCode PlatformWindowCreationFailed
+  field KhefestErrorCode PlatformWindowNotFound
+  field KhefestErrorCode PluginIncompatible
+  field KhefestErrorCode PluginLoadFailed
+  field KhefestErrorCode ResourceAllocationFailed
+  field KhefestErrorCode ResourceAlreadyDisposed
+  field KhefestErrorCode ResourceCorrupted
+  field KhefestErrorCode ResourceInvalidHandle
+  field KhefestErrorCode ResourceLeakDetected
+  field KhefestErrorCode ResourceLimitExceeded
+  field KhefestErrorCode ResourceNotFound
+  field KhefestErrorCode Timeout
+  field KhefestErrorCode UiLayoutError
+  field KhefestErrorCode Unknown
+  field int value__
+class Khefest.Core.Errors.KhefestErrorContext
+  ctor KhefestErrorContext(KhefestSubsystem subsystem, KhefestErrorCode errorCode)
+  prop KhefestErrorCode ErrorCode { get; }
+  prop Nullable<int> NativeErrorCode { get;set; }
+  prop IReadOnlyDictionary<string, Object> Properties { get; }
+  prop KhefestSubsystem Subsystem { get; }
+  prop int ThreadId { get; }
+  prop DateTimeOffset Timestamp { get; }
+  method string ToString()
+  method KhefestErrorContext With(string key, Object value)
+  method KhefestErrorContext WithNativeError(int nativeErrorCode)
+class Khefest.Core.Errors.KhefestException : ISerializable
+  ctor KhefestException(KhefestSubsystem subsystem, KhefestErrorCode errorCode, string message, Exception innerException, KhefestErrorContext context)
+  prop KhefestErrorContext Context { get; }
+  prop KhefestErrorCode ErrorCode { get; }
+  prop KhefestSubsystem Subsystem { get; }
+class Khefest.Core.Errors.KhefestGraphicsException : ISerializable
+  ctor KhefestGraphicsException(KhefestErrorCode errorCode, string message, Exception innerException, KhefestErrorContext context)
+  method KhefestGraphicsException DeviceLost(string details, Exception inner)
+  method KhefestGraphicsException ShaderCompilationFailed(string shaderName, string errorOutput)
+class Khefest.Core.Errors.KhefestPlatformException : ISerializable
+  ctor KhefestPlatformException(KhefestErrorCode errorCode, string message, Nullable<int> nativeErrorCode, Exception innerException, KhefestErrorContext context)
+class Khefest.Core.Errors.KhefestPluginException : ISerializable
+  ctor KhefestPluginException(KhefestErrorCode errorCode, string message, Exception innerException, KhefestErrorContext context)
+class Khefest.Core.Errors.KhefestResourceException : ISerializable
+  ctor KhefestResourceException(KhefestErrorCode errorCode, string message, Exception innerException, KhefestErrorContext context)
+  method KhefestResourceException AlreadyDisposed(string resourceName, UInt64 resourceId)
+  method KhefestResourceException LeakDetected(string resourceName, UInt64 resourceId, string allocationStackTrace)
+struct Khefest.Core.Errors.KhefestResult
+  prop KhefestErrorContext Context { get; }
+  prop KhefestErrorCode ErrorCode { get; }
+  prop string ErrorMessage { get; }
+  prop bool IsFailure { get; }
+  prop bool IsSuccess { get; }
+  method KhefestResult Failure(KhefestErrorCode errorCode, string errorMessage, KhefestErrorContext context)
+  method KhefestResult Failure(KhefestSubsystem subsystem, KhefestErrorCode errorCode, string errorMessage)
+  method KhefestResult Success()
+struct Khefest.Core.Errors.KhefestResult`1
+  prop KhefestErrorContext Context { get; }
+  prop KhefestErrorCode ErrorCode { get; }
+  prop string ErrorMessage { get; }
+  prop bool IsFailure { get; }
+  prop bool IsSuccess { get; }
+  prop T Value { get; }
+  method KhefestResult<T> Failure(KhefestErrorCode errorCode, string errorMessage, KhefestErrorContext context)
+  method KhefestResult<T> Failure(KhefestSubsystem subsystem, KhefestErrorCode errorCode, string errorMessage)
+  method KhefestResult<T> Success(T value)
+  method bool TryGetValue(out T value)
+enum Khefest.Core.Errors.KhefestSubsystem : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field KhefestSubsystem Assets
+  field KhefestSubsystem Audio
+  field KhefestSubsystem Core
+  field KhefestSubsystem Debug
+  field KhefestSubsystem Graphics
+  field KhefestSubsystem GraphicsHighLevel
+  field KhefestSubsystem GraphicsLowLevel
+  field KhefestSubsystem Input
+  field KhefestSubsystem Platform
+  field KhefestSubsystem Plugins
+  field KhefestSubsystem Resource
+  field KhefestSubsystem UI
+  field int value__
+  field KhefestSubsystem Windowing
+class Khefest.Core.Logging.CallbackLogSink : ILogSink
+  ctor CallbackLogSink(Action<LogEntry> callback)
+  method void Emit(in LogEntry entry)
+class Khefest.Core.Logging.ConsoleLogSink : ILogSink
+  ctor ConsoleLogSink()
+  method void Emit(in LogEntry entry)
+interface Khefest.Core.Logging.ILogger
+  prop string Category { get; }
+  prop KhefestSubsystem Subsystem { get; }
+  method void Debug(string message)
+  method void Error(string message, Exception exception)
+  method void Fatal(string message, Exception exception)
+  method void Info(string message)
+  method bool IsEnabled(LogLevel level)
+  method void Log(LogLevel level, string message, Exception exception, IReadOnlyDictionary<string, Object> properties)
+  method void Trace(string message)
+  method void Warning(string message, Exception exception)
+interface Khefest.Core.Logging.ILogSink
+  method void Emit(in LogEntry entry)
+class Khefest.Core.Logging.LogEntry : IEquatable<LogEntry>
+  ctor LogEntry(DateTimeOffset Timestamp, LogLevel Level, KhefestSubsystem Subsystem, string Category, string Message, Exception Exception, IReadOnlyDictionary<string, Object> Properties)
+  prop string Category { get;set; }
+  prop Exception Exception { get;set; }
+  prop LogLevel Level { get;set; }
+  prop string Message { get;set; }
+  prop IReadOnlyDictionary<string, Object> Properties { get;set; }
+  prop KhefestSubsystem Subsystem { get;set; }
+  prop DateTimeOffset Timestamp { get;set; }
+  method LogEntry <Clone>$()
+  method void Deconstruct(out DateTimeOffset Timestamp, out LogLevel Level, out KhefestSubsystem Subsystem, out string Category, out string Message, out Exception Exception, out IReadOnlyDictionary<string, Object> Properties)
+  method bool Equals(LogEntry other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+enum Khefest.Core.Logging.LogLevel : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field LogLevel Debug
+  field LogLevel Error
+  field LogLevel Fatal
+  field LogLevel Info
+  field LogLevel None
+  field LogLevel Trace
+  field int value__
+  field LogLevel Warning
+class Khefest.Core.Logging.LogManager
+  prop LogLevel GlobalMinimumLevel { get;set; }
+  method void AddSink(ILogSink sink)
+  method void ClearSinks()
+  method LogLevel GetEffectiveLevel(KhefestSubsystem subsystem)
+  method ILogger GetLogger<T>(KhefestSubsystem subsystem)
+  method ILogger GetLogger(KhefestSubsystem subsystem, string category)
+  method void RemoveSink(ILogSink sink)
+  method void SetSubsystemLevel(KhefestSubsystem subsystem, LogLevel level)
+class Khefest.Core.Logging.MemoryLogSink : ILogSink
+  ctor MemoryLogSink(int maxCapacity)
+  method void Clear()
+  method void Emit(in LogEntry entry)
+  method IReadOnlyList<LogEntry> GetRecentEntries()
+class Khefest.Core.Plugins.ExtensionRegistry : IExtensionRegistry
+  ctor ExtensionRegistry()
+  method void Clear()
+  method TExtension Get<TExtension>()
+  method IReadOnlyList<TExtension> GetAll<TExtension>()
+  method void Register<TExtension>(TExtension extension)
+  method bool Unregister<TExtension>(TExtension extension)
+interface Khefest.Core.Plugins.IExtensionRegistry
+  method TExtension Get<TExtension>()
+  method IReadOnlyList<TExtension> GetAll<TExtension>()
+  method void Register<TExtension>(TExtension extension)
+  method bool Unregister<TExtension>(TExtension extension)
+interface Khefest.Core.Plugins.IKhefestPlugin
+  prop PluginMetadata Metadata { get; }
+  prop PluginState State { get; }
+  method void Initialize(IPluginContext context)
+  method void Shutdown()
+  method void Start()
+  method void Stop()
+interface Khefest.Core.Plugins.IPluginContext
+  prop IExtensionRegistry Extensions { get; }
+  prop ILogger Logger { get; }
+  prop PluginMetadata Metadata { get; }
+  prop IDictionary<string, Object> Properties { get; }
+  method TService GetService<TService>()
+class Khefest.Core.Plugins.PluginBase : IKhefestPlugin
+  prop PluginMetadata Metadata { get; }
+  prop PluginState State { get;set; }
+  method void Initialize(IPluginContext context)
+  method void Shutdown()
+  method void Start()
+  method void Stop()
+class Khefest.Core.Plugins.PluginDependency : IEquatable<PluginDependency>
+  ctor PluginDependency(string PluginId, Version MinimumVersion)
+  prop Version MinimumVersion { get;set; }
+  prop string PluginId { get;set; }
+  method PluginDependency <Clone>$()
+  method void Deconstruct(out string PluginId, out Version MinimumVersion)
+  method bool Equals(Object obj)
+  method bool Equals(PluginDependency other)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Core.Plugins.PluginLoadContext
+  ctor PluginLoadContext(string pluginPath)
+  prop string PluginPath { get; }
+class Khefest.Core.Plugins.PluginManager : IDisposable
+  ctor PluginManager(IServiceProvider hostServices)
+  prop IExtensionRegistry Extensions { get; }
+  prop IReadOnlyList<IKhefestPlugin> Plugins { get; }
+  method IReadOnlyList<IKhefestPlugin> DiscoverPlugins(string directoryPath, bool recursive)
+  method void Dispose()
+  method void InitializeAll()
+  method void LoadPlugin(IKhefestPlugin plugin)
+  method IKhefestPlugin LoadPluginFromAssembly(string assemblyPath)
+  method void ShutdownAll()
+  method void StartAll()
+  method void StopAll()
+  method bool UnloadPlugin(string pluginId)
+class Khefest.Core.Plugins.PluginMetadata : IEquatable<PluginMetadata>
+  ctor PluginMetadata()
+  prop string Author { get;set; }
+  prop IReadOnlyList<PluginDependency> Dependencies { get;set; }
+  prop string Description { get;set; }
+  prop string Id { get;set; }
+  prop string Name { get;set; }
+  prop Version Version { get;set; }
+  method PluginMetadata <Clone>$()
+  method bool Equals(Object obj)
+  method bool Equals(PluginMetadata other)
+  method int GetHashCode()
+  method string ToString()
+enum Khefest.Core.Plugins.PluginState : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field PluginState Active
+  field PluginState Discovered
+  field PluginState Faulted
+  field PluginState Initialized
+  field PluginState Loaded
+  field PluginState Stopped
+  field PluginState Unloaded
+  field int value__
+class Khefest.Core.Profiling.ProfileFrame
+  ctor ProfileFrame(long frameIndex, double totalFrameTimeMs, IReadOnlyList<ProfileSample> rootSamples)
+  prop long FrameIndex { get; }
+  prop IReadOnlyList<ProfileSample> RootSamples { get; }
+  prop double TotalFrameTimeMilliseconds { get; }
+class Khefest.Core.Profiling.Profiler
+  prop bool IsEnabled { get;set; }
+  prop ProfileFrame LastCompletedFrame { get; }
+  method void BeginFrame()
+  method void BeginSample(string name)
+  method ProfileFrame EndFrame()
+  method void EndSample()
+  method ValueTuple<double, double, double> GetFrameStatistics()
+  method void Reset()
+  method ProfileScope Scope(string name)
+class Khefest.Core.Profiling.ProfileSample
+  ctor ProfileSample(string name, double elapsedMs, long callCount, IReadOnlyList<ProfileSample> children)
+  prop long CallCount { get; }
+  prop IReadOnlyList<ProfileSample> Children { get; }
+  prop double ElapsedMilliseconds { get; }
+  prop string Name { get; }
+  method string ToString()
+struct Khefest.Core.Profiling.ProfileScope
+  ctor ProfileScope(string name)
+  method void Dispose()
+interface Khefest.Core.Resources.IResource : IDisposable
+  prop string AllocationStackTrace { get; }
+  prop ResourceId Id { get; }
+  prop bool IsDisposed { get; }
+  prop string Name { get; }
+  prop long SizeInBytes { get; }
+  prop ResourceState State { get; }
+  prop ResourceType Type { get; }
+class Khefest.Core.Resources.MemoryBufferResource : IDisposable, IResource
+  ctor MemoryBufferResource(string name, long sizeInBytes, bool captureStackTrace)
+  prop IntPtr NativePointer { get; }
+class Khefest.Core.Resources.ResourceBase : IDisposable, IResource
+  prop string AllocationStackTrace { get; }
+  prop ResourceId Id { get; }
+  prop bool IsDisposed { get; }
+  prop string Name { get; }
+  prop long SizeInBytes { get;set; }
+  prop ResourceState State { get;set; }
+  prop ResourceType Type { get; }
+  method void Dispose()
+  method void MarkActive()
+class Khefest.Core.Resources.ResourceCache`2 : IDisposable
+  ctor ResourceCache`2(long maxBudgetBytes)
+  prop int Count { get; }
+  prop long MaxBudgetBytes { get;set; }
+  prop long TotalAllocatedBytes { get; }
+  method void Add(TKey key, TResource resource)
+  method void Clear()
+  method void Dispose()
+  method TResource GetOrCreate(TKey key, Func<TKey, TResource> factory)
+  method Task<TResource> GetOrCreateAsync(TKey key, Func<TKey, Task<TResource>> factory)
+  method bool Remove(TKey key)
+  method int TrimToBudget(long maxBytes)
+  method bool TryGet(TKey key, out TResource resource)
+struct Khefest.Core.Resources.ResourceHandle`1 : IEquatable<ResourceHandle<T>>
+  ctor ResourceHandle`1(ResourceId Id)
+  prop ResourceId Id { get;set; }
+  prop ResourceHandle<T> Invalid { get; }
+  prop bool IsValid { get; }
+  method void Deconstruct(out ResourceId Id)
+  method bool Equals(Object obj)
+  method bool Equals(ResourceHandle<T> other)
+  method int GetHashCode()
+  method string ToString()
+struct Khefest.Core.Resources.ResourceId : IComparable<ResourceId>, IEquatable<ResourceId>
+  ctor ResourceId(UInt64 Value)
+  prop ResourceId Invalid { get; }
+  prop bool IsValid { get; }
+  prop UInt64 Value { get;set; }
+  method int CompareTo(ResourceId other)
+  method void Deconstruct(out UInt64 Value)
+  method bool Equals(Object obj)
+  method bool Equals(ResourceId other)
+  method ResourceId Generate()
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Core.Resources.ResourceLifetimeTracker
+  ctor ResourceLifetimeTracker(bool enableLeakTracking)
+  prop bool EnableLeakTracking { get;set; }
+  prop bool HasLeaks { get; }
+  method IReadOnlyList<IResource> CheckForLeaks()
+  method void Clear()
+  method void EnforceNoLeaks()
+  method string GenerateLeakReport()
+  method IReadOnlyCollection<IResource> GetActiveResources()
+  method void Track(IResource resource)
+  method void Untrack(ResourceId id)
+class Khefest.Core.Resources.ResourceManager : IDisposable
+  ctor ResourceManager(MemoryConfig config)
+  prop bool AutoMemManagement { get;set; }
+  prop ResourceLifetimeTracker Tracker { get; }
+  method void Dispose()
+  method T Get<T>(ResourceHandle<T> handle)
+  method ResourceStatistics GetStatistics()
+  method ResourceHandle<T> Register<T>(T resource)
+  method bool Release<T>(ResourceHandle<T> handle)
+class Khefest.Core.Resources.ResourceScope : IDisposable
+  ctor ResourceScope(ResourceManager manager)
+  method void Dispose()
+  method T Track<T>(T resource)
+enum Khefest.Core.Resources.ResourceState : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field ResourceState Active
+  field ResourceState Allocated
+  field ResourceState Disposed
+  field ResourceState Uninitialized
+  field int value__
+class Khefest.Core.Resources.ResourceStatistics : IEquatable<ResourceStatistics>
+  ctor ResourceStatistics()
+  prop IReadOnlyDictionary<ResourceType, long> BytesByType { get;set; }
+  prop IReadOnlyDictionary<ResourceType, int> CountsByType { get;set; }
+  prop long TotalAllocatedBytes { get;set; }
+  prop int TotalResourceCount { get;set; }
+  method ResourceStatistics <Clone>$()
+  method bool Equals(Object obj)
+  method bool Equals(ResourceStatistics other)
+  method int GetHashCode()
+  method string ToString()
+enum Khefest.Core.Resources.ResourceType : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field ResourceType Audio
+  field ResourceType Buffer
+  field ResourceType Custom
+  field ResourceType Font
+  field ResourceType Mesh
+  field ResourceType Model
+  field ResourceType Pipeline
+  field ResourceType RenderTarget
+  field ResourceType Shader
+  field ResourceType Texture
+  field int value__
+class Khefest.Core.Resources.SharedResource`1 : IDisposable
+  ctor SharedResource`1(T resource)
+  prop int ReferenceCount { get; }
+  prop T Resource { get; }
+  method SharedResource<T> Acquire()
+  method void Dispose()
+class Khefest.Graphics.Assets.Texture2DAssetLoader : IAssetLoader, IAssetLoader<Texture2D>
+  ctor Texture2DAssetLoader(IGpuDevice device)
+  prop Type AssetType { get; }
+  prop IReadOnlyList<string> SupportedExtensions { get; }
+  method Texture2D Load(Stream stream, string assetPath, IAssetContext context)
+  method Task<Texture2D> LoadAsync(Stream stream, string assetPath, IAssetContext context)
+class Khefest.Graphics.Camera.Camera2D
+  ctor Camera2D(int viewportWidth, int viewportHeight)
+  prop Vector2 Origin { get;set; }
+  prop Vector2 Position { get;set; }
+  prop float Rotation { get;set; }
+  prop int ViewportHeight { get;set; }
+  prop int ViewportWidth { get;set; }
+  prop float Zoom { get;set; }
+  method Matrix4x4 GetProjectionMatrix()
+  method Matrix4x4 GetViewMatrix()
+  method Matrix4x4 GetViewProjectionMatrix()
+  method ValueTuple<Vector2, Vector2> GetVisibleBounds()
+  method void Move(Vector2 delta)
+  method void Resize(int width, int height)
+  method void Rotate(float deltaRadians)
+  method Vector2 ScreenToWorld(Vector2 screenCoord)
+  method Vector2 WorldToScreen(Vector2 worldCoord)
+  method void ZoomBy(float factor)
+class Khefest.Graphics.Camera.PerspectiveCamera
+  ctor PerspectiveCamera(Vector3 position, Vector3 target, float aspectRatio, float fovDegrees, float nearPlane, float farPlane)
+  prop float AspectRatio { get;set; }
+  prop float FarPlane { get;set; }
+  prop float FieldOfView { get;set; }
+  prop Vector3 Forward { get; }
+  prop float NearPlane { get;set; }
+  prop Vector3 Position { get;set; }
+  prop Matrix4x4 ProjectionMatrix { get; }
+  prop Vector3 Target { get;set; }
+  prop Vector3 Up { get;set; }
+  prop Matrix4x4 ViewMatrix { get; }
+  prop Matrix4x4 ViewProjectionMatrix { get; }
+  method void Orbit(float yawDelta, float pitchDelta, float zoomDelta)
+class Khefest.Graphics.Diagnostics.DebugOverlay
+  ctor DebugOverlay(FrameStatistics frameStats, RenderStatistics renderStats, ResourceManager resourceManager)
+  prop bool Visible { get;set; }
+  method void Draw(SpriteBatch spriteBatch, BitmapFont font, Vector2 position)
+  method void Draw(SpriteBatch spriteBatch, Vector2 position)
+  method string GetFormattedReport()
+class Khefest.Graphics.Diagnostics.FrameStatistics
+  ctor FrameStatistics()
+  prop long FrameNumber { get; }
+  prop double FramesPerSecond { get; }
+  prop double FrameTimeMilliseconds { get; }
+  prop int Gen0Collections { get; }
+  prop int Gen1Collections { get; }
+  prop int Gen2Collections { get; }
+  prop long ManagedMemoryBytes { get; }
+  method void Update(double deltaTimeSeconds)
+class Khefest.Graphics.Diagnostics.RenderStatistics
+  ctor RenderStatistics()
+  prop long ConstantBufferUploads { get;set; }
+  prop RenderStatistics Current { get; }
+  prop long DrawCallCount { get;set; }
+  prop long IndexCount { get;set; }
+  prop long IndexedDrawCallCount { get;set; }
+  prop long PipelineSwitches { get;set; }
+  prop long RenderPassCount { get;set; }
+  prop long ShaderSwitches { get;set; }
+  prop long TextureBinds { get;set; }
+  prop long TotalDrawCalls { get; }
+  prop long TriangleCount { get;set; }
+  prop long VertexCount { get;set; }
+  method RenderStatistics Clone()
+  method void RecordConstantBufferUpload()
+  method void RecordDraw(int vertexCount, int triangleCount)
+  method void RecordDrawIndexed(int indexCount, int vertexCount)
+  method void RecordPipelineSwitch()
+  method void RecordRenderPass()
+  method void RecordShaderSwitch()
+  method void RecordTextureBind()
+  method void Reset()
+class Khefest.Graphics.Diagnostics.Validation.GpuValidator
+  ctor GpuValidator(ValidationMode mode)
+  prop ValidationMode Mode { get;set; }
+  method void ValidateBufferUpload(IGpuBuffer buffer, long offsetInBytes, long sizeInBytes)
+  method void ValidateDraw(int vertexCount, int startVertexLocation, IGpuBuffer vertexBuffer, IPipeline pipeline)
+  method void ValidateDrawIndexed(int indexCount, int startIndexLocation, int baseVertexLocation, IGpuBuffer indexBuffer, IGpuBuffer vertexBuffer, IPipeline pipeline)
+  method void ValidateRenderTargetAttachment(IGpuTexture colorTarget, IGpuTexture depthTarget)
+enum Khefest.Graphics.Diagnostics.Validation.ValidationMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field ValidationMode Disabled
+  field ValidationMode Strict
+  field int value__
+  field ValidationMode Warning
+struct Khefest.Graphics.Mathematics.BoundingBox : IEquatable<BoundingBox>
+  ctor BoundingBox(Vector3 min, Vector3 max)
+  prop Vector3 Center { get; }
+  prop Vector3 Extents { get; }
+  prop Vector3 Size { get; }
+  method bool Contains(Vector3 point)
+  method BoundingBox CreateFromPoints(IEnumerable<Vector3> points)
+  method BoundingBox CreateMerged(BoundingBox a, BoundingBox b)
+  method bool Equals(BoundingBox other)
+  method bool Equals(Object obj)
+  method void GetCorners(Span<Vector3> corners)
+  method int GetHashCode()
+  method bool Intersects(BoundingBox other)
+  method string ToString()
+  method BoundingBox Transform(Matrix4x4 matrix)
+  field Vector3 Max
+  field Vector3 Min
+class Khefest.Graphics.Mathematics.BoundingFrustum
+  ctor BoundingFrustum(Matrix4x4 value)
+  prop Plane Bottom { get; }
+  prop Plane Far { get; }
+  prop Plane Left { get; }
+  prop Matrix4x4 Matrix { get;set; }
+  prop Plane Near { get; }
+  prop Plane Right { get; }
+  prop Plane Top { get; }
+  method bool Contains(Vector3 point)
+  method bool Intersects(BoundingBox box)
+  method bool Intersects(BoundingSphere sphere)
+struct Khefest.Graphics.Mathematics.BoundingSphere : IEquatable<BoundingSphere>
+  ctor BoundingSphere(Vector3 center, float radius)
+  method bool Contains(Vector3 point)
+  method BoundingSphere CreateFromPoints(IEnumerable<Vector3> points)
+  method bool Equals(BoundingSphere other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method bool Intersects(BoundingBox box)
+  method bool Intersects(BoundingSphere other)
+  method string ToString()
+  field Vector3 Center
+  field float Radius
+enum Khefest.Graphics.Mathematics.ContainmentType : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field ContainmentType Contains
+  field ContainmentType Disjoint
+  field ContainmentType Intersects
+  field int value__
+class Khefest.Graphics.Mathematics.MathHelper
+  method float Clamp(float value, float min, float max)
+  method float Lerp(float value1, float value2, float amount)
+  method float LerpAngle(float from, float to, float amount)
+  method float SmoothStep(float edge0, float edge1, float x)
+  method float ToDegrees(float radians)
+  method float ToRadians(float degrees)
+  method float WrapAngle(float angle)
+  field float Pi
+  field float PiOver2
+  field float PiOver4
+  field float TwoPi
+struct Khefest.Graphics.Mathematics.Plane : IEquatable<Plane>
+  ctor Plane(float a, float b, float c, float d)
+  ctor Plane(Vector3 normal, float d)
+  method float DotCoordinate(Vector3 point)
+  method bool Equals(Object obj)
+  method bool Equals(Plane other)
+  method int GetHashCode()
+  method void Normalize()
+  method Plane Normalize(Plane plane)
+  method string ToString()
+  field float D
+  field Vector3 Normal
+struct Khefest.Graphics.Mathematics.Rect2D : IEquatable<Rect2D>
+  ctor Rect2D(float X, float Y, float Width, float Height)
+  ctor Rect2D(Vector2 position, Vector2 size)
+  prop float Bottom { get; }
+  prop Vector2 BottomLeft { get; }
+  prop Vector2 BottomRight { get; }
+  prop Vector2 Center { get; }
+  prop float Height { get;set; }
+  prop bool IsEmpty { get; }
+  prop float Left { get; }
+  prop Vector2 Position { get; }
+  prop float Right { get; }
+  prop Vector2 Size { get; }
+  prop float Top { get; }
+  prop Vector2 TopLeft { get; }
+  prop Vector2 TopRight { get; }
+  prop float Width { get;set; }
+  prop float X { get;set; }
+  prop float Y { get;set; }
+  method bool Contains(float px, float py)
+  method bool Contains(in Rect2D other)
+  method bool Contains(Vector2 point)
+  method void Deconstruct(out float X, out float Y, out float Width, out float Height)
+  method bool Equals(Object obj)
+  method bool Equals(Rect2D other)
+  method Rect2D FromCenter(Vector2 center, Vector2 size)
+  method Rect2D FromPoints(Vector2 min, Vector2 max)
+  method int GetHashCode()
+  method Rect2D Inflate(float horizontalAmount, float verticalAmount)
+  method Rect2D Intersect(in Rect2D a, in Rect2D b)
+  method Rect2D Intersect(in Rect2D other)
+  method bool Intersects(in Rect2D other)
+  method Rect2D Offset(float offsetX, float offsetY)
+  method Rect2D Offset(Vector2 offset)
+  method string ToString()
+  method Rect2D Union(in Rect2D a, in Rect2D b)
+  method Rect2D Union(in Rect2D other)
+  field Rect2D Empty
+struct Khefest.Graphics.Memory.GpuBufferLease : IDisposable
+  prop IGpuBuffer Buffer { get; }
+  method void Dispose()
+class Khefest.Graphics.Memory.GpuBufferPool : IDisposable, IResource
+  ctor GpuBufferPool(IGpuDevice device, ResourceManager manager)
+  prop int ActiveLeaseCount { get; }
+  prop long TotalPooledBytes { get; }
+  method void Flush()
+  method GpuBufferLease Rent(int minimumSize, BufferUsage usage)
+struct Khefest.Graphics.Memory.RenderTargetLease : IDisposable
+  prop IGpuTexture Texture { get; }
+  method void Dispose()
+class Khefest.Graphics.Memory.RenderTargetPool : IDisposable, IResource
+  ctor RenderTargetPool(IGpuDevice device, ResourceManager manager)
+  prop int ActiveLeaseCount { get; }
+  prop long TotalPooledBytes { get; }
+  method void Flush()
+  method RenderTargetLease Rent(int width, int height, GpuFormat format, TextureUsage usage)
+  method RenderTargetLease RentDepthTarget(int width, int height, GpuFormat format)
+  method RenderTargetLease RentRenderTarget(int width, int height, GpuFormat format)
+class Khefest.Graphics.PostProcessing.PostProcessEffect : IDisposable, IResource
+  ctor PostProcessEffect(IGpuDevice device, string name, string pixelShaderSource, string entryPoint, BlendMode blendMode, ResourceManager manager)
+  prop IGpuDevice Device { get; }
+  prop IPipeline Pipeline { get; }
+  prop IGpuBuffer UniformBuffer { get; }
+  method void Apply(IGpuTexture source, IGpuTexture destination, Nullable<Color4> clearColor)
+  method void Draw(ICommandRecorder recorder, IGpuTexture source)
+  method void SetUniforms<T>(in T value)
+class Khefest.Graphics.Text.BitmapFont
+  ctor BitmapFont(Texture2D texture, int lineHeight, Dictionary<Char, Glyph> glyphs)
+  prop Glyph FallbackGlyph { get;set; }
+  prop int LineHeight { get; }
+  prop Texture2D Texture { get; }
+  method void DrawString(SpriteBatch batch, string text, Vector2 position, Color4 color, float scale)
+  method Vector2 MeasureString(string text, float scale)
+  method bool TryGetGlyph(Char c, out Glyph glyph)
+class Khefest.Graphics.Text.DefaultFont
+  method BitmapFont Create(IGpuDevice device, ResourceManager resourceManager)
+class Khefest.Graphics.Text.Glyph
+  ctor Glyph(Char character, TextureRegion region, int xOffset, int yOffset, int xAdvance)
+  prop Char Character { get; }
+  prop TextureRegion Region { get; }
+  prop int XAdvance { get; }
+  prop int XOffset { get; }
+  prop int YOffset { get; }
+class Khefest.Graphics.Texturing.RenderTarget2D : IDisposable, IGpuResource, IGpuTexture, IResource
+  ctor RenderTarget2D(IGpuDevice device, string name, int width, int height, bool hasDepth, GpuFormat format, ResourceManager manager)
+  prop IGpuTexture CanonicalTexture { get; }
+  prop IGpuTexture ColorTexture { get; }
+  prop IGpuTexture DepthTexture { get; }
+  prop IGpuDevice Device { get; }
+  prop GpuFormat Format { get; }
+  prop bool HasDepth { get; }
+  prop int Height { get; }
+  prop TextureUsage Usage { get; }
+  prop int Width { get; }
+  method RenderPassDesc CreatePass(Nullable<Color4> clearColor, bool clearDepth)
+  method bool Resize(int width, int height)
+  method void SetData<T>(ReadOnlySpan<T> data, int subresource, int rowPitchInBytes)
+class Khefest.Graphics.Texturing.Sprite
+  ctor Sprite(Texture2D texture)
+  ctor Sprite(TextureRegion region)
+  prop Color4 Color { get;set; }
+  prop float Depth { get;set; }
+  prop SpriteEffects Effects { get;set; }
+  prop float Height { get; }
+  prop Vector2 Origin { get;set; }
+  prop Vector2 Position { get;set; }
+  prop TextureRegion Region { get;set; }
+  prop float Rotation { get;set; }
+  prop Vector2 Scale { get;set; }
+  prop float Width { get; }
+  method void CenterOrigin()
+class Khefest.Graphics.Texturing.Texture2D : IDisposable, IResource
+  ctor Texture2D(string name, IGpuTexture gpuTexture, ResourceManager manager)
+  prop GpuFormat Format { get; }
+  prop IGpuTexture GpuTexture { get; }
+  prop int Height { get; }
+  prop int Width { get; }
+  method Texture2D CreateSolid(IGpuDevice device, string name, int width, int height, Color4 color, ResourceManager manager)
+  method Texture2D FromFile(IGpuDevice device, string filePath, ResourceManager manager)
+  method Texture2D FromRgba(IGpuDevice device, string name, int width, int height, ReadOnlySpan<byte> rgbaPixels, ResourceManager manager)
+  method void SetData<T>(ReadOnlySpan<T> data, int subresource, int rowPitchInBytes)
+class Khefest.Graphics.Texturing.TextureRegion
+  ctor TextureRegion(Texture2D texture)
+  ctor TextureRegion(Texture2D texture, float u0, float v0, float u1, float v1)
+  ctor TextureRegion(Texture2D texture, int x, int y, int width, int height)
+  prop int Height { get; }
+  prop Texture2D Texture { get; }
+  prop float U0 { get; }
+  prop float U1 { get; }
+  prop float V0 { get; }
+  prop float V1 { get; }
+  prop int Width { get; }
+  prop int X { get; }
+  prop int Y { get; }
+class Khefest.Graphics.Texturing.WicImageDecoder
+  method DecodedImage DecodeFromFile(string filePath)
+struct Khefest.Graphics.Texturing.DecodedImage
+  ctor DecodedImage(int width, int height, Byte[] pixels)
+  field int Height
+  field Byte[] Pixels
+  field int Width
+struct Khefest.Graphics.ThreeD.BoundingBox3D
+  ctor BoundingBox3D(Vector3 min, Vector3 max)
+  prop Vector3 Center { get; }
+  prop Vector3 Extents { get; }
+  prop Vector3 Max { get; }
+  prop Vector3 Min { get; }
+  method BoundingBox3D FromPoints(ReadOnlySpan<Vector3> points)
+struct Khefest.Graphics.ThreeD.Lighting.AmbientLight
+  ctor AmbientLight(Vector3 color, float intensity)
+  prop Vector3 Color { get;set; }
+  prop AmbientLight Default { get; }
+  prop float Intensity { get;set; }
+struct Khefest.Graphics.ThreeD.Lighting.DirectionalLight
+  ctor DirectionalLight(Vector3 direction, Vector3 color, float intensity)
+  prop Vector3 Color { get;set; }
+  prop DirectionalLight Default { get; }
+  prop Vector3 Direction { get;set; }
+  prop float Intensity { get;set; }
+class Khefest.Graphics.ThreeD.Material : IDisposable, IResource
+  ctor Material(string name, IGpuTexture diffuseTexture, Nullable<Vector4> color, float specularPower, float specularIntensity, ResourceManager manager)
+  prop Vector4 Color { get;set; }
+  prop IGpuTexture DiffuseTexture { get;set; }
+  prop float SpecularIntensity { get;set; }
+  prop float SpecularPower { get;set; }
+class Khefest.Graphics.ThreeD.Mesh : IDisposable, IResource
+  ctor Mesh(string name, IGpuBuffer vertexBuffer, IGpuBuffer indexBuffer, int vertexCount, int indexCount, BoundingBox3D bounds, IndexFormat indexFormat, ResourceManager manager, bool ownsBuffers)
+  prop BoundingBox3D Bounds { get; }
+  prop IGpuBuffer IndexBuffer { get; }
+  prop int IndexCount { get; }
+  prop IndexFormat IndexFormat { get; }
+  prop IGpuBuffer VertexBuffer { get; }
+  prop int VertexCount { get; }
+class Khefest.Graphics.ThreeD.MeshPrimitives
+  method Mesh CreateCube(IGpuDevice device, float size, ResourceManager manager)
+  method Mesh CreatePlane(IGpuDevice device, float width, float depth, ResourceManager manager)
+  method Mesh CreateSphere(IGpuDevice device, float radius, int segments, int rings, ResourceManager manager)
+class Khefest.Graphics.ThreeD.MeshRenderer : IDisposable, IResource
+  ctor MeshRenderer(IGpuDevice device, ResourceManager manager)
+  prop Material DefaultMaterial { get; }
+  prop Texture2D WhiteTexture { get; }
+  method void Begin(IGpuTexture colorTarget, IGpuTexture depthTarget, PerspectiveCamera camera, Nullable<DirectionalLight> dirLight, Nullable<AmbientLight> ambientLight, bool clearColor, bool clearDepth, Nullable<Color4> clearColorValue)
+  method void Draw(Mesh mesh, Material material, in Matrix4x4 world)
+  method void Draw(Model model, in Matrix4x4 world)
+  method void End()
+struct Khefest.Graphics.ThreeD.ObjectBufferData
+  field Vector2 PadObj
+  field float SpecularIntensity
+  field float SpecularPower
+  field Vector4 TintColor
+  field Matrix4x4 World
+struct Khefest.Graphics.ThreeD.SceneBufferData
+  field Vector3 AmbientLightColor
+  field float AmbientLightIntensity
+  field Vector3 CameraPosition
+  field Vector3 DirLightColor
+  field Vector3 DirLightDirection
+  field float DirLightIntensity
+  field float Pad0
+  field float Pad1
+  field Matrix4x4 Projection
+  field Matrix4x4 View
+class Khefest.Graphics.ThreeD.Model : IDisposable, IResource
+  ctor Model(string name, IEnumerable<ModelPart> parts, ResourceManager manager, bool ownsResources)
+  ctor Model(string name, Mesh mesh, Material material, ResourceManager manager, bool ownsResources)
+  prop IReadOnlyList<ModelPart> Parts { get; }
+  method void AddPart(ModelPart part)
+class Khefest.Graphics.ThreeD.ModelPart
+  ctor ModelPart(Mesh mesh, Material material, Nullable<Matrix4x4> transform)
+  prop Material Material { get;set; }
+  prop Mesh Mesh { get;set; }
+  prop Matrix4x4 Transform { get;set; }
+struct Khefest.Graphics.ThreeD.VertexPositionNormalTexture
+  ctor VertexPositionNormalTexture(Vector3 position, Vector3 normal, Vector2 texCoord)
+  field VertexLayout Layout
+  field Vector3 Normal
+  field Vector3 Position
+  field int SizeInBytes
+  field Vector2 TexCoord
+class Khefest.Graphics.TwoD.ShapeRenderer2D
+  method void DrawCircle(SpriteBatch batch, Vector2 center, float radius, Color4 color, int segments, float thickness)
+  method void DrawLine(SpriteBatch batch, Vector2 start, Vector2 end, Color4 color, float thickness)
+  method void DrawRectangle(SpriteBatch batch, Vector2 position, Vector2 size, Color4 color, float thickness)
+  method void DrawTriangle(SpriteBatch batch, Vector2 a, Vector2 b, Vector2 c, Color4 color, float thickness)
+  method void FillCircle(SpriteBatch batch, Vector2 center, float radius, Color4 color, int segments)
+  method void FillRectangle(SpriteBatch batch, Vector2 position, Vector2 size, Color4 color)
+  method void FillRectangle(SpriteBatch batch, Vector2 position, Vector2 size, Color4 color, float rotation, Vector2 origin)
+class Khefest.Graphics.TwoD.SpriteBatch : IDisposable
+  ctor SpriteBatch(IGpuDevice device, ResourceManager resourceManager)
+  prop BitmapFont DefaultFont { get; }
+  prop Texture2D WhiteTexture { get; }
+  prop TextureRegion WhiteTextureRegion { get; }
+  method void Begin(IGpuTexture renderTarget, Camera2D camera, SpriteSortMode sortMode)
+  method void Begin(IGpuTexture renderTarget, Matrix4x4 transformMatrix, SpriteSortMode sortMode)
+  method void Dispose()
+  method void Draw(Sprite sprite)
+  method void Draw(Texture2D texture, Vector2 position, Nullable<Color4> color)
+  method void Draw(Texture2D texture, Vector2 position, Vector2 size, Color4 color)
+  method void Draw(Texture2D texture, Vector2 position, Vector2 size, Color4 color, float rotation, Vector2 origin, SpriteEffects effects, float depth)
+  method void Draw(TextureRegion region, Vector2 position, Nullable<Color4> color)
+  method void Draw(TextureRegion region, Vector2 position, Vector2 size, Color4 color)
+  method void Draw(TextureRegion region, Vector2 position, Vector2 size, Color4 color, float rotation, Vector2 origin, SpriteEffects effects, float depth)
+  method void DrawString(BitmapFont font, string text, Vector2 position, Color4 color, float scale)
+  method void DrawString(string text, Vector2 position, Color4 color, float scale)
+  method void End()
+  method void Flush()
+  field int MaxBatchIndices
+  field int MaxBatchQuads
+  field int MaxBatchVertices
+enum Khefest.Graphics.TwoD.SpriteEffects : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field SpriteEffects FlipHorizontally
+  field SpriteEffects FlipVertically
+  field SpriteEffects None
+  field int value__
+enum Khefest.Graphics.TwoD.SpriteSortMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field SpriteSortMode BackToFront
+  field SpriteSortMode Deferred
+  field SpriteSortMode FrontToBack
+  field SpriteSortMode Texture
+  field int value__
+struct Khefest.Graphics.TwoD.Vertex2D
+  ctor Vertex2D(Vector2 position, Vector2 texCoord, Color4 color)
+  field Color4 Color
+  field VertexLayout Layout
+  field Vector2 Position
+  field Vector2 TexCoord
+enum Khefest.Graphics.LowLevel.BlendMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field BlendMode Additive
+  field BlendMode AlphaBlend
+  field BlendMode Opaque
+  field int value__
+enum Khefest.Graphics.LowLevel.BufferUsage : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field BufferUsage Index
+  field BufferUsage Staging
+  field BufferUsage Storage
+  field BufferUsage Uniform
+  field int value__
+  field BufferUsage Vertex
+struct Khefest.Graphics.LowLevel.Color4 : IEquatable<Color4>
+  ctor Color4(float R, float G, float B, float A)
+  prop float A { get;set; }
+  prop float B { get;set; }
+  prop float G { get;set; }
+  prop float R { get;set; }
+  method void Deconstruct(out float R, out float G, out float B, out float A)
+  method bool Equals(Color4 other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+  field Color4 Black
+  field Color4 Blue
+  field Color4 CornflowerBlue
+  field Color4 Crimson
+  field Color4 Cyan
+  field Color4 DarkGray
+  field Color4 DeepSkyBlue
+  field Color4 Gold
+  field Color4 Gray
+  field Color4 Green
+  field Color4 LightGray
+  field Color4 LightSkyBlue
+  field Color4 LimeGreen
+  field Color4 Magenta
+  field Color4 Orange
+  field Color4 Purple
+  field Color4 Red
+  field Color4 RoyalBlue
+  field Color4 SlateGray
+  field Color4 Teal
+  field Color4 Transparent
+  field Color4 White
+  field Color4 Yellow
+enum Khefest.Graphics.LowLevel.CompareFunction : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field CompareFunction Always
+  field CompareFunction Equal
+  field CompareFunction Greater
+  field CompareFunction GreaterEqual
+  field CompareFunction Less
+  field CompareFunction LessEqual
+  field CompareFunction Never
+  field CompareFunction NotEqual
+  field int value__
+enum Khefest.Graphics.LowLevel.CullMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field CullMode Back
+  field CullMode Front
+  field CullMode None
+  field int value__
+enum Khefest.Graphics.LowLevel.FillMode : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field FillMode Solid
+  field int value__
+  field FillMode Wireframe
+enum Khefest.Graphics.LowLevel.GpuFormat : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field GpuFormat B8G8R8A8_UNorm
+  field GpuFormat D24_UNorm_S8_UInt
+  field GpuFormat D32_Float
+  field GpuFormat R16_UInt
+  field GpuFormat R16G16B16A16_Float
+  field GpuFormat R32_Float
+  field GpuFormat R32_UInt
+  field GpuFormat R32G32_Float
+  field GpuFormat R32G32B32_Float
+  field GpuFormat R32G32B32A32_Float
+  field GpuFormat R8G8B8A8_UNorm
+  field int value__
+interface Khefest.Graphics.LowLevel.ICommandRecorder : IDisposable
+  prop bool IsInPass { get; }
+  method void BeginPass(in RenderPassDesc pass)
+  method ScopedRenderPass BeginScopedPass(in RenderPassDesc pass)
+  method void Draw(int vertexCount, int firstVertex)
+  method void DrawIndexed(int indexCount, int firstIndex, int vertexOffset)
+  method void EndPass()
+  method void SetIndexBuffer(IGpuBuffer buffer, IndexFormat format)
+  method void SetPipeline(IPipeline pipeline)
+  method void SetScissor(in ScissorRect scissor)
+  method void SetTexture(int slot, IGpuTexture texture)
+  method void SetUniformBuffer(int slot, IGpuBuffer buffer)
+  method void SetVertexBuffer(int slot, IGpuBuffer buffer)
+  method void SetViewport(in Viewport viewport)
+interface Khefest.Graphics.LowLevel.IGpuBuffer : IDisposable, IGpuResource, IResource
+  prop BufferUsage Usage { get; }
+  method void SetData<T>(in T value, int offsetInBytes)
+  method void SetData<T>(ReadOnlySpan<T> data, int offsetInBytes)
+interface Khefest.Graphics.LowLevel.IGpuDevice : IDisposable
+  prop string AdapterName { get; }
+  prop long DedicatedVideoMemory { get; }
+  method IGpuShader CompileShader(string name, ShaderStage stage, string sourceCode, string entryPoint)
+  method IGpuBuffer CreateBuffer(string name, long sizeInBytes, BufferUsage usage)
+  method ICommandRecorder CreateCommandRecorder()
+  method IPipeline CreatePipeline(string name, in PipelineDesc desc)
+  method IGpuShader CreateShader(string name, ShaderStage stage, ReadOnlySpan<byte> bytecode, string entryPoint)
+  method ISwapChain CreateSwapChain(IWindow window, int width, int height, bool vsync)
+  method IGpuTexture CreateTexture(string name, int width, int height, GpuFormat format, TextureUsage usage)
+  method void Submit(ICommandRecorder recorder)
+  method void WaitForGpu()
+interface Khefest.Graphics.LowLevel.IGpuResource : IDisposable, IResource
+interface Khefest.Graphics.LowLevel.IGpuShader : IDisposable, IGpuResource, IResource
+  prop ReadOnlySpan<byte> Bytecode { get; }
+  prop string EntryPoint { get; }
+  prop ShaderStage Stage { get; }
+interface Khefest.Graphics.LowLevel.IGpuTexture : IDisposable, IGpuResource, IResource
+  prop IGpuTexture CanonicalTexture { get; }
+  prop GpuFormat Format { get; }
+  prop int Height { get; }
+  prop TextureUsage Usage { get; }
+  prop int Width { get; }
+  method void SetData<T>(ReadOnlySpan<T> data, int subresource, int rowPitchInBytes)
+enum Khefest.Graphics.LowLevel.IndexFormat : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field IndexFormat UInt16
+  field IndexFormat UInt32
+  field int value__
+interface Khefest.Graphics.LowLevel.IPipeline : IDisposable, IGpuResource, IResource
+  prop PipelineDesc Description { get; }
+interface Khefest.Graphics.LowLevel.ISwapChain : IDisposable
+  prop IGpuTexture CurrentBackBuffer { get; }
+  prop int Height { get; }
+  prop int Width { get; }
+  method void Present(bool vsync)
+  method void Resize(int width, int height)
+class Khefest.Graphics.LowLevel.PipelineDesc : IEquatable<PipelineDesc>
+  ctor PipelineDesc()
+  prop BlendMode BlendMode { get;set; }
+  prop CullMode CullMode { get;set; }
+  prop CompareFunction DepthFunction { get;set; }
+  prop bool DepthTestEnabled { get;set; }
+  prop bool DepthWriteEnabled { get;set; }
+  prop FillMode FillMode { get;set; }
+  prop IGpuShader PixelShader { get;set; }
+  prop PrimitiveTopology Topology { get;set; }
+  prop VertexLayout VertexLayout { get;set; }
+  prop IGpuShader VertexShader { get;set; }
+  method PipelineDesc <Clone>$()
+  method bool Equals(Object obj)
+  method bool Equals(PipelineDesc other)
+  method int GetHashCode()
+  method string ToString()
+enum Khefest.Graphics.LowLevel.PrimitiveTopology : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field PrimitiveTopology LineList
+  field PrimitiveTopology LineStrip
+  field PrimitiveTopology PointList
+  field PrimitiveTopology TriangleList
+  field PrimitiveTopology TriangleStrip
+  field int value__
+class Khefest.Graphics.LowLevel.RenderPassDesc : IEquatable<RenderPassDesc>
+  ctor RenderPassDesc()
+  prop Color4 ClearColor { get;set; }
+  prop bool ClearColorTarget { get;set; }
+  prop float ClearDepth { get;set; }
+  prop bool ClearDepthTarget { get;set; }
+  prop IGpuTexture ColorTarget { get;set; }
+  prop IReadOnlyList<IGpuTexture> ColorTargets { get;set; }
+  prop IGpuTexture DepthTarget { get;set; }
+  method RenderPassDesc <Clone>$()
+  method bool Equals(Object obj)
+  method bool Equals(RenderPassDesc other)
+  method int GetHashCode()
+  method string ToString()
+struct Khefest.Graphics.LowLevel.ScissorRect : IEquatable<ScissorRect>
+  ctor ScissorRect(int X, int Y, int Width, int Height)
+  prop int Height { get;set; }
+  prop int Width { get;set; }
+  prop int X { get;set; }
+  prop int Y { get;set; }
+  method void Deconstruct(out int X, out int Y, out int Width, out int Height)
+  method bool Equals(Object obj)
+  method bool Equals(ScissorRect other)
+  method int GetHashCode()
+  method string ToString()
+struct Khefest.Graphics.LowLevel.ScopedRenderPass : IDisposable
+  ctor ScopedRenderPass(ICommandRecorder recorder, in RenderPassDesc desc)
+  method void Dispose()
+enum Khefest.Graphics.LowLevel.ShaderStage : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field ShaderStage Compute
+  field ShaderStage Pixel
+  field int value__
+  field ShaderStage Vertex
+class Khefest.Graphics.LowLevel.Spike.GpuSpikeResult : IEquatable<GpuSpikeResult>
+  ctor GpuSpikeResult(bool IsSuccess, string AdapterName, long DedicatedVideoMemoryBytes, int FramesPresented, double AverageFrameTimeMs, string Details)
+  prop string AdapterName { get;set; }
+  prop double AverageFrameTimeMs { get;set; }
+  prop long DedicatedVideoMemoryBytes { get;set; }
+  prop string Details { get;set; }
+  prop int FramesPresented { get;set; }
+  prop bool IsSuccess { get;set; }
+  method GpuSpikeResult <Clone>$()
+  method void Deconstruct(out bool IsSuccess, out string AdapterName, out long DedicatedVideoMemoryBytes, out int FramesPresented, out double AverageFrameTimeMs, out string Details)
+  method bool Equals(GpuSpikeResult other)
+  method bool Equals(Object obj)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Graphics.LowLevel.Spike.WindowsGpuSpike
+  method GpuSpikeResult Run(IWindow window, int frameCount, Nullable<Color4> clearColor)
+enum Khefest.Graphics.LowLevel.TextureUsage : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field TextureUsage DepthStencil
+  field TextureUsage RenderTarget
+  field TextureUsage Sampled
+  field TextureUsage Storage
+  field int value__
+class Khefest.Graphics.LowLevel.VertexElement : IEquatable<VertexElement>
+  ctor VertexElement(string semanticName, GpuFormat format, int offset, int semanticIndex)
+  ctor VertexElement(string SemanticName, int SemanticIndex, GpuFormat Format, int Offset)
+  prop GpuFormat Format { get;set; }
+  prop int Offset { get;set; }
+  prop int SemanticIndex { get;set; }
+  prop string SemanticName { get;set; }
+  method VertexElement <Clone>$()
+  method void Deconstruct(out string SemanticName, out int SemanticIndex, out GpuFormat Format, out int Offset)
+  method bool Equals(Object obj)
+  method bool Equals(VertexElement other)
+  method int GetHashCode()
+  method string ToString()
+class Khefest.Graphics.LowLevel.VertexLayout : IEquatable<VertexLayout>
+  ctor VertexLayout(int stride, VertexElement[] elements)
+  ctor VertexLayout(IReadOnlyList<VertexElement> Elements, int Stride)
+  ctor VertexLayout(VertexElement[] elements)
+  prop IReadOnlyList<VertexElement> Elements { get;set; }
+  prop int Stride { get;set; }
+  method VertexLayout <Clone>$()
+  method void Deconstruct(out IReadOnlyList<VertexElement> Elements, out int Stride)
+  method bool Equals(Object obj)
+  method bool Equals(VertexLayout other)
+  method int GetHashCode()
+  method string ToString()
+struct Khefest.Graphics.LowLevel.Viewport : IEquatable<Viewport>
+  ctor Viewport(float X, float Y, float Width, float Height, float MinDepth, float MaxDepth)
+  prop float Height { get;set; }
+  prop float MaxDepth { get;set; }
+  prop float MinDepth { get;set; }
+  prop float Width { get;set; }
+  prop float X { get;set; }
+  prop float Y { get;set; }
+  method void Deconstruct(out float X, out float Y, out float Width, out float Height, out float MinDepth, out float MaxDepth)
+  method bool Equals(Object obj)
+  method bool Equals(Viewport other)
+  method int GetHashCode()
+  method string ToString()
+interface Khefest.Input.IInputService
+  prop Vector2 MouseDelta { get; }
+  prop ValueTuple<int, int> MouseDeltaPixels { get; }
+  prop Vector2 MousePosition { get; }
+  prop ValueTuple<int, int> MousePositionPixels { get; }
+  prop float ScrollDelta { get; }
+  method bool IsKeyDown(Key key)
+  method bool IsKeyPressed(Key key)
+  method bool IsKeyReleased(Key key)
+  method bool IsKeyUp(Key key)
+  method bool IsMouseButtonDown(MouseButton button)
+  method bool IsMouseButtonPressed(MouseButton button)
+  method bool IsMouseButtonReleased(MouseButton button)
+  method bool IsMouseButtonUp(MouseButton button)
+  method void OnChar(Char c)
+  method void OnKeyDown(Key key)
+  method void OnKeyUp(Key key)
+  method void OnMouseDown(MouseButton button)
+  method void OnMouseMove(int x, int y)
+  method void OnMouseScroll(float delta)
+  method void OnMouseUp(MouseButton button)
+  method void Update()
+  event Action<Char> CharTyped
+  event Action<Key> KeyDown
+  event Action<Key> KeyUp
+class Khefest.Input.InputManager : IInputService
+  ctor InputManager()
+  prop Vector2 MouseDelta { get; }
+  prop ValueTuple<int, int> MouseDeltaPixels { get; }
+  prop Vector2 MousePosition { get; }
+  prop ValueTuple<int, int> MousePositionPixels { get; }
+  prop float ScrollDelta { get; }
+  method bool IsKeyDown(Key key)
+  method bool IsKeyPressed(Key key)
+  method bool IsKeyReleased(Key key)
+  method bool IsMouseButtonDown(MouseButton button)
+  method bool IsMouseButtonPressed(MouseButton button)
+  method bool IsMouseButtonReleased(MouseButton button)
+  method void OnChar(Char c)
+  method void OnKeyDown(Key key)
+  method void OnKeyUp(Key key)
+  method void OnMouseDown(MouseButton button)
+  method void OnMouseMove(int x, int y)
+  method void OnMouseScroll(float delta)
+  method void OnMouseUp(MouseButton button)
+  method void Update()
+  event Action<Char> CharTyped
+  event Action<Key> KeyDown
+  event Action<Key> KeyUp
+enum Khefest.Input.Key : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field Key A
+  field Key Add
+  field Key Apostrophe
+  field Key B
+  field Key Backslash
+  field Key Backspace
+  field Key C
+  field Key CapsLock
+  field Key Comma
+  field Key D
+  field Key D0
+  field Key D1
+  field Key D2
+  field Key D3
+  field Key D4
+  field Key D5
+  field Key D6
+  field Key D7
+  field Key D8
+  field Key D9
+  field Key Decimal
+  field Key Delete
+  field Key Divide
+  field Key Down
+  field Key E
+  field Key End
+  field Key Enter
+  field Key Equals
+  field Key Escape
+  field Key F
+  field Key F1
+  field Key F10
+  field Key F11
+  field Key F12
+  field Key F2
+  field Key F3
+  field Key F4
+  field Key F5
+  field Key F6
+  field Key F7
+  field Key F8
+  field Key F9
+  field Key G
+  field Key Grave
+  field Key H
+  field Key Home
+  field Key I
+  field Key Insert
+  field Key J
+  field Key K
+  field Key L
+  field Key Left
+  field Key LeftAlt
+  field Key LeftBracket
+  field Key LeftControl
+  field Key LeftShift
+  field Key LeftSuper
+  field Key M
+  field Key Minus
+  field Key Multiply
+  field Key N
+  field Key None
+  field Key NumLock
+  field Key NumPad0
+  field Key NumPad1
+  field Key NumPad2
+  field Key NumPad3
+  field Key NumPad4
+  field Key NumPad5
+  field Key NumPad6
+  field Key NumPad7
+  field Key NumPad8
+  field Key NumPad9
+  field Key O
+  field Key P
+  field Key PageDown
+  field Key PageUp
+  field Key Pause
+  field Key Period
+  field Key PrintScreen
+  field Key Q
+  field Key R
+  field Key Right
+  field Key RightAlt
+  field Key RightBracket
+  field Key RightControl
+  field Key RightShift
+  field Key RightSuper
+  field Key S
+  field Key ScrollLock
+  field Key Semicolon
+  field Key Slash
+  field Key Space
+  field Key Subtract
+  field Key T
+  field Key Tab
+  field Key U
+  field Key Up
+  field Key V
+  field int value__
+  field Key W
+  field Key X
+  field Key Y
+  field Key Z
+enum Khefest.Input.MouseButton : IComparable, IConvertible, IFormattable, ISpanFormattable
+  field MouseButton Button4
+  field MouseButton Button5
+  field MouseButton Left
+  field MouseButton Middle
+  field MouseButton Right
+  field int value__
+class Khefest.Input.VectorExtensions
+  method void Deconstruct(Vector2 vector, out float x, out float y)
+interface Khefest.Windowing.IDisplayMonitor
+  prop string DeviceName { get; }
+  prop int Height { get; }
+  prop bool IsPrimary { get; }
+  prop int RefreshRate { get; }
+  prop int Width { get; }
+  prop int WorkAreaHeight { get; }
+  prop int WorkAreaWidth { get; }
+  prop int WorkAreaX { get; }
+  prop int WorkAreaY { get; }
+  prop int X { get; }
+  prop int Y { get; }
+interface Khefest.Windowing.IDisplayService
+  method IReadOnlyList<IDisplayMonitor> GetMonitors()
+  method IDisplayMonitor GetPrimaryMonitor()
+interface Khefest.Windowing.IWindow : IDisposable
+  prop int ClientHeight { get; }
+  prop int ClientWidth { get; }
+  prop IntPtr Handle { get; }
+  prop int Height { get; }
+  prop bool IsFocused { get; }
+  prop bool IsVisible { get; }
+  prop WindowMode Mode { get; }
+  prop bool ShouldClose { get; }
+  prop string Title { get;set; }
+  prop int Width { get; }
+  prop int X { get; }
+  prop int Y { get; }
+  method void Hide()
+  method void PollEvents()
+  method void RequestClose()
+  method void SetMode(WindowMode mode)
+  method void SetPosition(int x, int y)
+  method void SetSize(int width, int height)
+  method void Show()
+  event Action CloseRequested
+  event Action<bool> FocusChanged
+  event Action<int, int> Moved
+  event Action<int, int> Resized

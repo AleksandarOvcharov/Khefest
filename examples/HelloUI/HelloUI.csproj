@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Khefest.Examples.HelloUI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Khefest.Core\Khefest.Core.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.Windowing\Khefest.Windowing.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.Input\Khefest.Input.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.Graphics.LowLevel\Khefest.Graphics.LowLevel.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.Graphics\Khefest.Graphics.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.UI\Khefest.UI.csproj" />
+    <ProjectReference Include="..\..\src\Khefest.Windows\Khefest.Windows.csproj" />
+  </ItemGroup>
+
+</Project>

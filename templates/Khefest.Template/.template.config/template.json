@@ -1,0 +1,18 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Aleksandar Ovcharov",
+  "classifications": [ "Game", "Graphics", "2D", "3D", "DirectX", "Windows" ],
+  "name": "Khefest Game Application",
+  "generatorVersions": "[1.0.0.0-*)",
+  "description": "A starter 2D/3D game project powered by the Khefest Game Engine on .NET 10.",
+  "groupIdentity": "Khefest.Template.App",
+  "precedence": "100",
+  "identity": "Khefest.Template.App.CSharp",
+  "shortName": "khefest",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "KhefestTemplate",
+  "preferNameDirectory": true
+}

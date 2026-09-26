@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Khefest.Core\Khefest.Core.csproj" />
+    <ProjectReference Include="..\Khefest.Windowing\Khefest.Windowing.csproj" />
+    <ProjectReference Include="..\Khefest.Input\Khefest.Input.csproj" />
+    <ProjectReference Include="..\Khefest.Graphics.LowLevel\Khefest.Graphics.LowLevel.csproj" />
+    <ProjectReference Include="..\Khefest.Graphics\Khefest.Graphics.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>Khefest.Templates</PackageId>
+    <Title>Khefest Game Engine Templates</Title>
+    <Description>Templates for creating 2D and 3D games with the Khefest Game Engine on .NET 10.</Description>
+    <PackageTags>templates;game-engine;khefest;graphics;directx;2d;3d;gamedev</PackageTags>
+    <TargetFramework>net10.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IsPackable>true</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Khefest.Template\**\*" Exclude="Khefest.Template\bin\**;Khefest.Template\obj\**" PackagePath="content\" />
+  </ItemGroup>
+
+</Project>

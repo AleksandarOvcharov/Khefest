@@ -1,0 +1,42 @@
+﻿<Project>
+  <PropertyGroup>
+    <Version>1.6.1</Version>
+    <Authors>Aleksandar Ovcharov</Authors>
+    <Company>Khefest</Company>
+    <Product>Khefest Game Engine</Product>
+    <Copyright>Copyright © Aleksandar Ovcharov 2026</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/AleksandarOvcharov/Khefest</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AleksandarOvcharov/Khefest</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>graphics;game-engine;directx;rendering;2d;3d;gamedev;csharp;dotnet;vortice</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <!-- Compiler & Language Settings -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+    
+    <!-- Symbols and Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    
+    <!-- Generate XML documentation file for IntelliSense and NuGet packages -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- By default, non-library projects (samples, examples, tests) are not packable -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Only src projects are packable as NuGet packages -->
+  <PropertyGroup Condition="$(MSBuildProjectFullPath.Contains('\src\')) or $(MSBuildProjectFullPath.Contains('/src/'))">
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Condition="Exists('$(MSBuildThisFileDirectory)README.md')" />
+  </ItemGroup>
+</Project>
