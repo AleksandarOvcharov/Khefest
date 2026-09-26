@@ -3,7 +3,7 @@
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-0078D6?logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.0-blue)](artifacts/packages)
+[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.1-blue)](artifacts/packages)
 [![Tests](https://img.shields.io/badge/Tests-110%20Passed-brightgreen)](tests/Khefest.Tests)
 
 > **"Simple by default. Powerful when needed."**
@@ -103,39 +103,6 @@ Khefest **owns** the graphics abstraction. Direct3D 11 is strictly an internal W
 
 ---
 
-### 📦 Installation & Scaffolding
-
-#### Option A: Instant Scaffolding via `dotnet new khefest` (Recommended)
-Install the official project template and scaffold a new game in seconds:
-
-```bash
-# 1. Install template package
-dotnet new install Khefest.Templates
-
-# 2. Create and run a new game
-dotnet new khefest -n MyGame
-cd MyGame
-dotnet run
-```
-
-#### Option B: Add to an Existing Project
-Install the canonical metapackage:
-
-```bash
-dotnet add package Khefest --version 1.6.1
-```
-
-Or install individual modular packages as needed:
-* `Khefest.Core`
-* `Khefest.Graphics`
-* `Khefest.Graphics.LowLevel`
-* `Khefest.Input`
-* `Khefest.Windowing`
-* `Khefest.Windows`
-* `Khefest.UI`
-
----
-
 ### 🧩 UI Engine & Plugins
 
 * **Hierarchical UI Layout**: WPF/Flutter-style two-pass layout system (`Measure` and `Arrange`) supporting `Canvas` and `StackPanel`.
@@ -144,13 +111,59 @@ Or install individual modular packages as needed:
 
 ---
 
-## 🚀 Quick Start: Building a Game
+## 📦 Installation & Getting Started
 
-Creating a game with Khefest requires no complex boilerplate:
+### Option A — Project Template (`dotnet new khefest`)
+Install the official project template to scaffold and launch a working game in seconds:
 
+```bash
+# 1. Install template package
+dotnet new install Khefest.Templates
+
+# 2. Create a new game
+dotnet new khefest -n MyGame
+
+# 3. Run
+cd MyGame
+dotnet run
+```
+
+---
+
+### Option B — Existing / New .NET Project
+If you prefer adding Khefest manually to a new or existing .NET project, follow this 6-step workflow:
+
+#### 1. Create a Windows .NET 10 project
+```bash
+dotnet new console -n MyGame
+cd MyGame
+```
+
+#### 2. Set TargetFramework to `net10.0-windows`
+Ensure your `MyGame.csproj` specifies `net10.0-windows` and `WinExe`:
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+</Project>
+```
+
+#### 3. Add Khefest
+Install the canonical metapackage via the .NET CLI:
+```bash
+dotnet add package Khefest --version 1.6.1
+```
+*(Or install granular modules as needed: `Khefest.Core`, `Khefest.Graphics`, `Khefest.Input`, `Khefest.Windows`, `Khefest.UI`)*
+
+#### 4. Create a Game subclass
+Create `Game.cs` inheriting from `Game` and implement the lifecycle methods (`Initialize`, `Update`, `Render`, `Shutdown`):
 ```csharp
 using System.Numerics;
-using Khefest.Core.Configuration;
 using Khefest.Graphics.Camera;
 using Khefest.Graphics.LowLevel;
 using Khefest.Graphics.TwoD;
@@ -162,6 +175,7 @@ public sealed class MyGame : Game
 {
     private SpriteBatch? _spriteBatch;
     private Camera2D? _camera;
+    private Vector2 _position = new(640, 360);
 
     public override void Initialize()
     {
@@ -179,34 +193,42 @@ public sealed class MyGame : Game
         if (Input.IsKeyDown(Key.Escape))
             Exit();
 
-        // Smooth camera movement using DeltaTime
-        if (Input.IsKeyDown(Key.D))
-            _camera?.Move(new Vector2(200f * gameTime.DeltaTime, 0));
+        float dt = gameTime.DeltaTime;
+        float speed = 300f;
+
+        if (Input.IsKeyDown(Key.W) || Input.IsKeyDown(Key.Up))    _position.Y -= speed * dt;
+        if (Input.IsKeyDown(Key.S) || Input.IsKeyDown(Key.Down))  _position.Y += speed * dt;
+        if (Input.IsKeyDown(Key.A) || Input.IsKeyDown(Key.Left))  _position.X -= speed * dt;
+        if (Input.IsKeyDown(Key.D) || Input.IsKeyDown(Key.Right)) _position.X += speed * dt;
     }
 
     public override void Render(GameTime gameTime)
     {
         var backBuffer = SwapChain.CurrentBackBuffer;
-        
-        // Clear screen with RAII scoped pass
+
+        // 1. Scoped clear pass
         var clearPass = new RenderPassDesc
         {
             ColorTargets = [backBuffer],
-            ClearColor = new Color4(0.1f, 0.12f, 0.18f, 1.0f),
+            ClearColor = new Color4(0.10f, 0.12f, 0.16f, 1.0f),
             ClearColorTarget = true
         };
-        
-        using var cmd = GpuDevice.CreateCommandRecorder();
-        using (cmd.BeginScopedPass(clearPass))
-        {
-            // Scoped pass guarantees EndPass is called even on exceptions
-        }
-        GpuDevice.Submit(cmd);
 
-        // Draw 2D scene
+        using (var cmd = GpuDevice.CreateCommandRecorder())
+        {
+            using (cmd.BeginScopedPass(clearPass))
+            {
+                // Scoped pass guarantees EndPass is called even on exceptions
+            }
+            GpuDevice.Submit(cmd);
+        }
+
+        // 2. High-level 2D rendering
         _spriteBatch?.Begin(backBuffer, _camera);
-        _spriteBatch?.FillCircle(new Vector2(100, 100), 40f, Color4.CornflowerBlue);
-        _spriteBatch?.DrawString("Welcome to Khefest!", new Vector2(50, 50), Color4.White);
+        _spriteBatch?.FillCircle(_position, 28f, Color4.RoyalBlue);
+        _spriteBatch?.DrawCircle(_position, 34f, Color4.White, thickness: 2f);
+        _spriteBatch?.DrawString("Welcome to Khefest!", new Vector2(24, 24), Color4.Gold, scale: 1.2f);
+        _spriteBatch?.DrawString($"FPS: {gameTime.Fps:F0} | Use WASD / Arrows to move", new Vector2(24, 60), Color4.White);
         _spriteBatch?.End();
     }
 
@@ -216,6 +238,13 @@ public sealed class MyGame : Game
         base.Shutdown();
     }
 }
+```
+
+#### 5. Configure KhefestApp
+In `Program.cs`, use `KhefestConfigBuilder` to configure window properties and run the game:
+```csharp
+using Khefest.Core.Configuration;
+using Khefest.Windows.Application;
 
 public static class Program
 {
@@ -223,13 +252,24 @@ public static class Program
     public static void Main()
     {
         var config = new KhefestConfigBuilder()
-            .ConfigureWindow(w => w with { Title = "My Khefest Game", Width = 1280, Height = 720, VSync = true })
+            .ConfigureWindow(w => w with
+            {
+                Title = "My Khefest Game",
+                Width = 1280,
+                Height = 720,
+                VSync = true
+            })
             .Build();
 
         var game = new MyGame();
         KhefestApp.Run(game, config);
     }
 }
+```
+
+#### 6. Run
+```bash
+dotnet run
 ```
 
 ---
