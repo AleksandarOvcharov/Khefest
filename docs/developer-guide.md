@@ -254,7 +254,7 @@ public sealed class StarterGame : Game
 {
     private SpriteBatch? _spriteBatch;
     private Camera2D? _camera;
-    private Vector2 _position = new(640, 360);
+    private Vector2 _position = Vector2.Zero;
 
     public override void Initialize()
     {

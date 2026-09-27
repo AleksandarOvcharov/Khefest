@@ -3,7 +3,7 @@
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-0078D6?logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.2-blue)](artifacts/packages)
+[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.3-blue)](artifacts/packages)
 [![Tests](https://img.shields.io/badge/Tests-112%20Passed-brightgreen)](tests/Khefest.Tests)
 
 > **"Simple by default. Powerful when needed."**
@@ -156,7 +156,7 @@ Ensure your `MyGame.csproj` specifies `net10.0-windows` and `WinExe`:
 #### 3. Add Khefest
 Install the canonical metapackage via the .NET CLI:
 ```bash
-dotnet add package Khefest --version 1.6.2
+dotnet add package Khefest --version 1.6.3
 ```
 *(Or install granular modules as needed: `Khefest.Core`, `Khefest.Graphics`, `Khefest.Input`, `Khefest.Windows`, `Khefest.UI`)*
 

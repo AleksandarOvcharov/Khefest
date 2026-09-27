@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.3] - 2026-09-27
+
+> **External Consumer Validation, Documentation Synchronization & Hardening Milestone**  
+> Validated real-world consumer setups across samples/MyGame and pure NuGet package consumer samples/NuGetConsumer. Synchronized documentation snippets across README.md, docs/getting-started.md, and docs/developer-guide.md with responsive player movement and background grid rendering. Added automated test verifying MyGame only references the canonical metapackage Khefest.csproj. Updated template and consumer configurations to v1.6.3 with 113 passing tests and 0 warnings.
+
+### Fixed & Validated
+- **Documentation Example Synchronization**:
+  - Synchronized starter game snippets in docs/getting-started.md and docs/developer-guide.md to reflect origin-centered entities, background reference arena grids, and decoupled screen-space HUD overlay rendering.
+  - Aligned published PackageReference examples and 	emplates/Khefest.Template/KhefestTemplate.csproj to version 1.6.3.
+- **Consumer Metapackage Dependency Verification**:
+  - Added MyGame_Sample_ConsumesCanonicalMetapackage_AndCompilesCleanly test to ExternalDeveloperValidationTests.cs verifying external project structure adheres to single-reference metapackage consumption.
+- **Pure NuGet Consumer Validation (samples/NuGetConsumer)**:
+  - Re-verified pure package restoration from local feed with zero project references under TreatWarningsAsErrors=true.
+
+---
+
 ## [1.6.2] - 2026-09-27
 
 > **Rendering Correctness, Buffer Bounds & Stability Fixes Milestone**  

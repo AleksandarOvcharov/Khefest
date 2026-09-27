@@ -1,4 +1,4 @@
-﻿# Getting Started with Khefest
+# Getting Started with Khefest
 
 Welcome to **Khefest (Хефест)**! This guide will walk you through the fundamentals of setting up a project, initializing the engine, handling input, rendering 2D and 3D graphics, creating a UI, and gracefully shutting down.
 
@@ -88,7 +88,7 @@ public sealed class HelloKhefest : Game
 {
     private SpriteBatch? _spriteBatch;
     private Camera2D? _camera;
-    private Vector2 _playerPos = new(400, 300);
+    private Vector2 _playerPos = Vector2.Zero;
 
     public override void Initialize()
     {

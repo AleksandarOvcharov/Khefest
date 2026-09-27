@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Xml.Linq;
 using Khefest.Core.Configuration;
 using Khefest.Core.Resources;
@@ -193,5 +193,23 @@ float4 PSMain(PSInput input) : SV_TARGET
         var pkgRef = doc.Descendants("PackageReference")
             .FirstOrDefault(p => p.Attribute("Include")?.Value == "Khefest");
         Assert.NotNull(pkgRef);
+    }
+
+    [Fact]
+    public void MyGame_Sample_ConsumesCanonicalMetapackage_AndCompilesCleanly()
+    {
+        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        var csprojPath = Path.Combine(repoRoot, "samples", "MyGame", "MyGame.csproj");
+
+        Assert.True(File.Exists(csprojPath), $"Sample csproj '{csprojPath}' must exist.");
+
+        var doc = XDocument.Load(csprojPath);
+        var projectReferences = doc.Descendants("ProjectReference").ToList();
+
+        // Must only reference the metapackage Khefest.csproj
+        Assert.Single(projectReferences);
+        var refPath = projectReferences[0].Attribute("Include")?.Value ?? string.Empty;
+        Assert.True(refPath.EndsWith("Khefest.csproj", StringComparison.OrdinalIgnoreCase),
+            $"MyGame sample should reference canonical metapackage Khefest.csproj, but references {refPath}");
     }
 }
