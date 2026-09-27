@@ -47,7 +47,24 @@ public sealed unsafe class WindowsGpuBuffer : ResourceBase, IGpuBuffer
             // slot 48 = UpdateSubresource
             var contextVTable = *(void***)_deviceContext;
             var updateSubresource = (delegate* unmanaged[Stdcall]<nint, nint, uint, void*, void*, uint, uint, void>)contextVTable[48];
-            updateSubresource(_deviceContext, _buffer, 0, null, pSrc, 0, 0);
+
+            if (_usage.HasFlag(BufferUsage.Uniform) && offsetInBytes == 0 && byteLength == SizeInBytes)
+            {
+                updateSubresource(_deviceContext, _buffer, 0, null, pSrc, 0, 0);
+            }
+            else
+            {
+                var box = new D3D11Native.D3D11_BOX
+                {
+                    Left = (uint)offsetInBytes,
+                    Top = 0,
+                    Front = 0,
+                    Right = (uint)(offsetInBytes + byteLength),
+                    Bottom = 1,
+                    Back = 1
+                };
+                updateSubresource(_deviceContext, _buffer, 0, &box, pSrc, 0, 0);
+            }
         }
     }
 
@@ -68,7 +85,24 @@ public sealed unsafe class WindowsGpuBuffer : ResourceBase, IGpuBuffer
             // slot 48 = UpdateSubresource
             var contextVTable = *(void***)_deviceContext;
             var updateSubresource = (delegate* unmanaged[Stdcall]<nint, nint, uint, void*, void*, uint, uint, void>)contextVTable[48];
-            updateSubresource(_deviceContext, _buffer, 0, null, pSrc, (uint)byteLength, 0);
+
+            if (_usage.HasFlag(BufferUsage.Uniform) && offsetInBytes == 0 && byteLength == SizeInBytes)
+            {
+                updateSubresource(_deviceContext, _buffer, 0, null, pSrc, 0, 0);
+            }
+            else
+            {
+                var box = new D3D11Native.D3D11_BOX
+                {
+                    Left = (uint)offsetInBytes,
+                    Top = 0,
+                    Front = 0,
+                    Right = (uint)(offsetInBytes + byteLength),
+                    Bottom = 1,
+                    Back = 1
+                };
+                updateSubresource(_deviceContext, _buffer, 0, &box, pSrc, 0, 0);
+            }
         }
     }
 

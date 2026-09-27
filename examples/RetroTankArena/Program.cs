@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Khefest.Core.Configuration;
 using Khefest.Core.Errors;
@@ -819,7 +819,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
         // =========================================================================
         // PASS 1: Render Arena Scene to Offscreen Render Target (High-Level SpriteBatch)
         // =========================================================================
-        _spriteBatch.Begin(_offscreenTarget, _camera, SpriteSortMode.Deferred);
+        _spriteBatch.Begin(_offscreenTarget, _camera, SpriteSortMode.Deferred, new Color4(0.02f, 0.03f, 0.05f, 1.0f));
 
         // Ground arena grid lines
         for (float x = 0; x <= ArenaWidth; x += 100f)

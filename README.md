@@ -1,10 +1,10 @@
-﻿# Khefest (Хефест)
+# Khefest (Хефест)
 
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-0078D6?logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.1-blue)](artifacts/packages)
-[![Tests](https://img.shields.io/badge/Tests-110%20Passed-brightgreen)](tests/Khefest.Tests)
+[![NuGet Version](https://img.shields.io/badge/NuGet-1.6.2-blue)](artifacts/packages)
+[![Tests](https://img.shields.io/badge/Tests-112%20Passed-brightgreen)](tests/Khefest.Tests)
 
 > **"Simple by default. Powerful when needed."**
 
@@ -44,7 +44,7 @@ Khefest/
 │   ├── CosmicVanguard3D/           # Space flight simulator with 3,000 orbiting bodies and frustum culling
 │   └── RetroTankArena/             # Full playable combat game with custom HLSL CRT post-processing
 ├── tests/
-│   └── Khefest.Tests/              # Automated headless test suite (110 tests across all milestones)
+│   └── Khefest.Tests/              # Automated headless test suite (112 tests across all milestones)
 └── docs/                           # In-depth architectural specifications and user guides
 ```
 
@@ -64,16 +64,16 @@ Khefest **owns** the graphics abstraction. Direct3D 11 is strictly an internal W
        High-Level                Low-Level
           API                       API
           │                         │
-    ┌─────┴─────┐          ┌────────┴────────┐
-    │           │          │                 │
+    ┌─────┴─────┐             ┌─────┴─────┐
+    │           │             │           │
    2D          3D       GPU resources    Commands
-    │           │          │                 │
+    │           │             │           │
  SpriteBatch  MeshRenderer  IGpuDevice       ICommandRecorder
  Camera2D     Perspective   IGpuBuffer       IPipeline
  RenderTarget2D Camera      IGpuTexture      RenderPassDesc
  PostProcessEffect          ISwapChain       ScopedRenderPass
-    │           │          │                 │
-    └─────┬─────┘          └────────┬────────┘
+    │           │             │           │
+    └─────┬─────┘             └─────┬─────┘
           │                         │
           └────────────┬────────────┘
                        │
@@ -156,7 +156,7 @@ Ensure your `MyGame.csproj` specifies `net10.0-windows` and `WinExe`:
 #### 3. Add Khefest
 Install the canonical metapackage via the .NET CLI:
 ```bash
-dotnet add package Khefest --version 1.6.1
+dotnet add package Khefest --version 1.6.2
 ```
 *(Or install granular modules as needed: `Khefest.Core`, `Khefest.Graphics`, `Khefest.Input`, `Khefest.Windows`, `Khefest.UI`)*
 
@@ -171,11 +171,13 @@ using Khefest.Input;
 using Khefest.Windows.Application;
 using Khefest.Windows.Timing;
 
+namespace MyGame;
+
 public sealed class MyGame : Game
 {
     private SpriteBatch? _spriteBatch;
     private Camera2D? _camera;
-    private Vector2 _position = new(640, 360);
+    private Vector2 _position = Vector2.Zero;
 
     public override void Initialize()
     {
@@ -194,7 +196,7 @@ public sealed class MyGame : Game
             Exit();
 
         float dt = gameTime.DeltaTime;
-        float speed = 300f;
+        float speed = 350f;
 
         if (Input.IsKeyDown(Key.W) || Input.IsKeyDown(Key.Up))    _position.Y -= speed * dt;
         if (Input.IsKeyDown(Key.S) || Input.IsKeyDown(Key.Down))  _position.Y += speed * dt;
@@ -223,12 +225,26 @@ public sealed class MyGame : Game
             GpuDevice.Submit(cmd);
         }
 
-        // 2. High-level 2D rendering
+        // 2. High-level 2D rendering in world space
         _spriteBatch?.Begin(backBuffer, _camera);
+
+        // Background reference grid & boundary
+        for (float x = -600; x <= 600; x += 100)
+            _spriteBatch?.DrawLine(new Vector2(x, -350), new Vector2(x, 350), new Color4(0.15f, 0.18f, 0.24f, 1f));
+        for (float y = -350; y <= 350; y += 100)
+            _spriteBatch?.DrawLine(new Vector2(-600, y), new Vector2(600, y), new Color4(0.15f, 0.18f, 0.24f, 1f));
+
+        _spriteBatch?.DrawRectangle(new Vector2(-600, -350), new Vector2(1200, 700), new Color4(0.3f, 0.4f, 0.5f, 1f), thickness: 2f);
+
+        // Player circle
         _spriteBatch?.FillCircle(_position, 28f, Color4.RoyalBlue);
         _spriteBatch?.DrawCircle(_position, 34f, Color4.White, thickness: 2f);
+        _spriteBatch?.End();
+
+        // 3. Screen-space HUD overlay
+        _spriteBatch?.Begin(backBuffer, camera: null);
         _spriteBatch?.DrawString("Welcome to Khefest!", new Vector2(24, 24), Color4.Gold, scale: 1.2f);
-        _spriteBatch?.DrawString($"FPS: {gameTime.Fps:F0} | Use WASD / Arrows to move", new Vector2(24, 60), Color4.White);
+        _spriteBatch?.DrawString($"FPS: {gameTime.Fps:F0} | Pos: ({_position.X:F0}, {_position.Y:F0}) | Use WASD / Arrows to move", new Vector2(24, 60), Color4.White);
         _spriteBatch?.End();
     }
 
@@ -245,6 +261,8 @@ In `Program.cs`, use `KhefestConfigBuilder` to configure window properties and r
 ```csharp
 using Khefest.Core.Configuration;
 using Khefest.Windows.Application;
+
+namespace MyGame;
 
 public static class Program
 {
@@ -309,7 +327,7 @@ dotnet test --nologo
 ```
 
 ```text
-Passed!  - Failed: 0, Passed: 110, Skipped: 0, Total: 110
+Passed!  - Failed: 0, Passed: 112, Skipped: 0, Total: 112
 ```
 
 ---

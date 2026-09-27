@@ -139,7 +139,7 @@ public static class ShapeRenderer2D
     }
 
     /// <summary>
-    /// Draws a filled circle approximated by triangle fans/slices.
+    /// Draws a filled circle approximated by horizontal scanline slices without polygon overlap artifacts.
     /// </summary>
     public static void FillCircle(
         this SpriteBatch batch,
@@ -149,22 +149,20 @@ public static class ShapeRenderer2D
         int segments = 32)
     {
         ArgumentNullException.ThrowIfNull(batch);
-        if (segments < 3) segments = 3;
+        if (radius <= 0.0f) return;
 
-        // Draw multiple horizontal scanline slices or angular segments
-        float step = MathF.Tau / segments;
-        for (int i = 0; i < segments; i++)
+        int slices = Math.Clamp(segments, 8, 256);
+        float sliceHeight = (radius * 2.0f) / slices;
+        float rSq = radius * radius;
+
+        for (int i = 0; i < slices; i++)
         {
-            float theta0 = i * step;
-            float theta1 = (i + 1) * step;
+            float yRel = -radius + (i + 0.5f) * sliceHeight;
+            float halfWidth = MathF.Sqrt(Math.Max(0.0f, rSq - yRel * yRel));
 
-            Vector2 p1 = center + new Vector2(radius * MathF.Cos(theta0), radius * MathF.Sin(theta0));
-            Vector2 p2 = center + new Vector2(radius * MathF.Cos(theta1), radius * MathF.Sin(theta1));
-
-            // Draw line to chord midpoint to efficiently fill the pie segment
-            Vector2 mid = (p1 + p2) * 0.5f;
-            var width = Vector2.Distance(p1, p2);
-            batch.DrawLine(center, mid, color, width);
+            var pos = new Vector2(center.X - halfWidth, center.Y + yRel - sliceHeight * 0.5f);
+            var size = new Vector2(halfWidth * 2.0f, sliceHeight);
+            batch.FillRectangle(pos, size, color);
         }
     }
 

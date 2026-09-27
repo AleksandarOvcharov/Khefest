@@ -10,12 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Khefest.Core\Khefest.Core.csproj" />
-    <ProjectReference Include="..\..\src\Khefest.Windowing\Khefest.Windowing.csproj" />
-    <ProjectReference Include="..\..\src\Khefest.Input\Khefest.Input.csproj" />
-    <ProjectReference Include="..\..\src\Khefest.Graphics.LowLevel\Khefest.Graphics.LowLevel.csproj" />
-    <ProjectReference Include="..\..\src\Khefest.Graphics\Khefest.Graphics.csproj" />
-    <ProjectReference Include="..\..\src\Khefest.Windows\Khefest.Windows.csproj" />
+    <ProjectReference Include="..\..\src\Khefest\Khefest.csproj" />
   </ItemGroup>
 
 </Project>

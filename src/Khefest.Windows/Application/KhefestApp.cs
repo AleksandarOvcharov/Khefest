@@ -2,6 +2,7 @@
 using Khefest.Core.Errors;
 using Khefest.Core.Logging;
 using Khefest.Core.Resources;
+using Khefest.Graphics.LowLevel;
 using Khefest.Graphics.LowLevel.Windows;
 using Khefest.Input;
 using Khefest.Windows.Display;
@@ -42,38 +43,40 @@ public static class KhefestApp
         // 3. Create Win32 Window
         using var window = new Win32Window(config.Window, input);
 
-        // 4. Initialize GPU Device and SwapChain
+        // 4. Initialize GPU Device
         using var gpuDevice = new WindowsGpuDevice(resources);
-        using var swapChain = gpuDevice.CreateSwapChain(
-            window,
-            window.ClientWidth,
-            window.ClientHeight,
-            config.Window.VSync);
-
-        // Handle dynamic window resizing
-        window.Resized += (w, h) =>
-        {
-            if (w > 0 && h > 0)
-            {
-                swapChain.Resize(w, h);
-                game.OnResize(w, h);
-            }
-        };
-
-        // 5. Inject dependencies into Game instance
-        game.Window = window;
-        game.Input = input;
-        game.Displays = displayService;
-        game.Config = config;
-        game.Resources = resources;
-        game.GpuDevice = gpuDevice;
-        game.SwapChain = swapChain;
-        game.IsRunning = true;
-
-        var timer = new Win32Timer();
+        ISwapChain? swapChain = null;
 
         try
         {
+            swapChain = gpuDevice.CreateSwapChain(
+                window,
+                window.ClientWidth,
+                window.ClientHeight,
+                config.Window.VSync);
+
+            // Handle dynamic window resizing
+            window.Resized += (w, h) =>
+            {
+                if (w > 0 && h > 0)
+                {
+                    swapChain.Resize(w, h);
+                    game.OnResize(w, h);
+                }
+            };
+
+            // 5. Inject dependencies into Game instance
+            game.Window = window;
+            game.Input = input;
+            game.Displays = displayService;
+            game.Config = config;
+            game.Resources = resources;
+            game.GpuDevice = gpuDevice;
+            game.SwapChain = swapChain;
+            game.IsRunning = true;
+
+            var timer = new Win32Timer();
+
             // 6. Initialize Game
             Logger.Info("Initializing application...");
             game.Initialize();
@@ -141,6 +144,16 @@ public static class KhefestApp
             catch (Exception ex)
             {
                 Logger.Error("Error during game shutdown", ex);
+            }
+
+            // Dispose engine-managed SwapChain before leak verification so backbuffers are released
+            try
+            {
+                swapChain?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error during swapchain disposal", ex);
             }
 
             // Verify memory leaks if configured

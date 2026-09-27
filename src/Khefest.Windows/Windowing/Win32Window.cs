@@ -86,11 +86,13 @@ public sealed class Win32Window : IWindow
         if (_classRegistered) return;
 
         var hInstance = Win32Native.GetModuleHandleW(null);
+        var defWindowProcPtr = NativeLibrary.GetExport(NativeLibrary.Load("user32.dll"), "DefWindowProcW");
+
         var wc = new WNDCLASSEXW
         {
             CbSize = (uint)Marshal.SizeOf<WNDCLASSEXW>(),
             Style = Win32Constants.CS_HREDRAW | Win32Constants.CS_VREDRAW | Win32Constants.CS_OWNDC,
-            LpfnWndProc = Marshal.GetFunctionPointerForDelegate<Win32Native.WndProcDelegate>(Win32Native.DefWindowProcW),
+            LpfnWndProc = defWindowProcPtr,
             HInstance = hInstance,
             HCursor = Win32Native.LoadCursorW(nint.Zero, (nint)32512), // IDC_ARROW
             LpszClassName = WindowClassName

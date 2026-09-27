@@ -1,9 +1,36 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to the **Khefest** engine will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.6.2] - 2026-09-27
+
+> **Rendering Correctness, Buffer Bounds & Stability Fixes Milestone**  
+> Addressed rendering artifacts in 2D sprite and shape rendering, eliminated backbuffer shutdown leak reports, protected native window callback procedures from GC collection, and resolved player movement and centering in template and quickstart samples.
+
+### Fixed
+- **Direct3D 11 Buffer Over-Read in `WindowsGpuBuffer.SetData`**:
+  - Added `D3D11_BOX` struct in `D3D11Native.cs` and passed accurate byte-range destination boxes to `ID3D11DeviceContext::UpdateSubresource`.
+  - Prevented D3D11 from over-reading past the bounds of active vertex/index spans into uninitialized heap memory when updating dynamic GPU buffers.
+- **SwapChainBackBuffer Shutdown Leak Report**:
+  - Ensured `ISwapChain` is deterministically disposed in the `finally` block of `KhefestApp.Run` prior to evaluating `ResourceManager.Tracker.HasLeaks`.
+  - Backbuffer render target texture is cleanly dereferenced and untracked at shutdown, eliminating false-positive leak warnings.
+- **Win32 Window GC Callback Protection**:
+  - Replaced transient managed delegate window procedure with native `DefWindowProcW` export address obtained via `NativeLibrary.GetExport(..., "DefWindowProcW")`.
+  - Eliminates potential garbage collection and access violation crashes during native window destruction on application exit.
+- **RetroTankArena Offscreen Target Accumulation**:
+  - Added `clearColor` parameter to `SpriteBatch.Begin(renderTarget, camera, sortMode, Color4? clearColor)` and `SpriteBatch.Begin(renderTarget, transformMatrix, sortMode, Color4? clearColor)`.
+  - Explicitly cleared `_offscreenTarget` on Pass 1 in `RetroTankArena`, eliminating smeared tank trails and accumulating explosion artifacts across frames.
+- **ShapeRenderer2D `FillCircle` Rasterization Artifacts**:
+  - Replaced radiating overlapping lines with non-overlapping horizontal scanline slices (`FillRectangle`), removing jagged perimeter spikes and alpha double-blending artifacts.
+- **Template and QuickStart Circle Centering & Movement**:
+  - Decoupled camera position from player position in `samples/MyGame/Game.cs`, `templates/Khefest.Template/Game.cs`, and `README.md`, allowing the circle to freely move across the viewport.
+  - Added background arena reference grid lines (`DrawLine`) and arena boundary box (`DrawRectangle`) in world space.
+  - Decoupled world-space entity rendering from screen-space HUD overlay rendering (`camera: null`), and displayed live player coordinates in the HUD (`Pos: ({_position.X:F0}, {_position.Y:F0})`).
 
 ---
 

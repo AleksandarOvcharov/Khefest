@@ -98,6 +98,17 @@ internal static unsafe class D3D11Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct D3D11_BOX
+    {
+        public uint Left;
+        public uint Top;
+        public uint Front;
+        public uint Right;
+        public uint Bottom;
+        public uint Back;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct D3D11_TEXTURE2D_DESC
     {
         public uint Width;

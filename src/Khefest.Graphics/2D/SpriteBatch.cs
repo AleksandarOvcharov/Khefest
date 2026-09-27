@@ -144,16 +144,34 @@ float4 PSMain(PSInput input) : SV_TARGET
         Camera2D? camera = null,
         SpriteSortMode sortMode = SpriteSortMode.Deferred)
     {
+        Begin(renderTarget, camera, sortMode, null);
+    }
+
+    public void Begin(
+        IGpuTexture renderTarget,
+        Camera2D? camera,
+        SpriteSortMode sortMode,
+        Color4? clearColor)
+    {
         var matrix = camera?.GetViewProjectionMatrix() ??
             Matrix4x4.CreateOrthographicOffCenter(0f, renderTarget.Width, renderTarget.Height, 0f, 0f, 1f);
 
-        Begin(renderTarget, matrix, sortMode);
+        Begin(renderTarget, matrix, sortMode, clearColor);
     }
 
     public void Begin(
         IGpuTexture renderTarget,
         Matrix4x4 transformMatrix,
         SpriteSortMode sortMode = SpriteSortMode.Deferred)
+    {
+        Begin(renderTarget, transformMatrix, sortMode, null);
+    }
+
+    public void Begin(
+        IGpuTexture renderTarget,
+        Matrix4x4 transformMatrix,
+        SpriteSortMode sortMode,
+        Color4? clearColor)
     {
         if (_hasBegun)
         {
@@ -177,7 +195,8 @@ float4 PSMain(PSInput input) : SV_TARGET
         var pass = new RenderPassDesc
         {
             ColorTarget = _currentTarget,
-            ClearColorTarget = false
+            ClearColorTarget = clearColor.HasValue,
+            ClearColor = clearColor ?? Color4.Black
         };
         _recorder.BeginPass(pass);
         _recorder.SetPipeline(_pipeline);
@@ -459,6 +478,11 @@ float4 PSMain(PSInput input) : SV_TARGET
     {
         if (Interlocked.Exchange(ref _disposed, 1) == 0)
         {
+            if (_hasBegun)
+            {
+                End();
+            }
+
             _defaultFont.Texture.Dispose();
             _whitePixelTexture.Dispose();
             _constantBuffer.Dispose();

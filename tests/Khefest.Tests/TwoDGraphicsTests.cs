@@ -182,4 +182,40 @@ public sealed class TwoDGraphicsTests
         var leaks = resources.Tracker.CheckForLeaks();
         Assert.Empty(leaks);
     }
+
+    [Fact]
+    public void SpriteBatch_BeginWithClearColor_ExecutesWithoutError()
+    {
+        using var resources = new ResourceManager(new MemoryConfig { AutoMemManagement = false, EnableLeakTracking = true });
+        using var device = new WindowsGpuDevice(resources);
+
+        using var target = device.CreateTexture("ClearTarget", 400, 300, GpuFormat.R8G8B8A8_UNorm, TextureUsage.RenderTarget | TextureUsage.Sampled);
+        using var batch = new SpriteBatch(device, resources);
+
+        var clearColor = new Color4(0.05f, 0.1f, 0.15f, 1.0f);
+        batch.Begin(target, camera: null, SpriteSortMode.Deferred, clearColor);
+        batch.FillCircle(new Vector2(200, 150), 40f, Color4.CornflowerBlue);
+        batch.End();
+        device.WaitForGpu();
+    }
+
+    [Fact]
+    public void WindowsGpuBuffer_PartialSubresourceUpdate_SucceedsWithBoxBounds()
+    {
+        using var resources = new ResourceManager(new MemoryConfig { AutoMemManagement = false, EnableLeakTracking = true });
+        using var device = new WindowsGpuDevice(resources);
+
+        int totalBytes = 1024;
+        using var buffer = device.CreateBuffer("SubresourceTestBuffer", totalBytes, BufferUsage.Vertex);
+
+        // Upload partial data at offset
+        var subData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+        buffer.SetData<byte>(subData, offsetInBytes: 64);
+
+        // Upload single value at offset
+        int value = 0x12345678;
+        buffer.SetData<int>(in value, offsetInBytes: 128);
+
+        device.WaitForGpu();
+    }
 }
