@@ -4,7 +4,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-0078D6?logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![NuGet Version](https://img.shields.io/badge/NuGet-1.6.3-blue)](artifacts/packages)
-[![Tests](https://img.shields.io/badge/Tests-112%20Passed-brightgreen)](tests/Khefest.Tests)
+[![Tests](https://img.shields.io/badge/Tests-120%20Passed-brightgreen)](tests/Khefest.Tests)
 
 > **"Simple by default. Powerful when needed."**
 
@@ -38,13 +38,14 @@ Khefest/
 │   ├── HelloWindow/                # Basic Win32 window and event pump
 │   ├── HelloTriangle/              # Low-level pipeline and custom vertex shader rendering
 │   ├── Hello2D/                    # 2D SpriteBatch, camera pan/zoom/rotation, fonts, and HUD
+│   ├── HelloAudio/                 # Audio showcase (sound effects, ambient music, volume/pitch/pan)
 │   ├── Hello3D/                    # 3D textured mesh, directional lighting, and perspective orbit camera
 │   ├── HelloUI/                    # Interactive UI showcase (widgets, live typing, sliders, dark/light theme)
 │   ├── StressTest2D/               # StarSwarm 2D particle swarm & quad-buffer stress test
 │   ├── CosmicVanguard3D/           # Space flight simulator with 3,000 orbiting bodies and frustum culling
 │   └── RetroTankArena/             # Full playable combat game with custom HLSL CRT post-processing
 ├── tests/
-│   └── Khefest.Tests/              # Automated headless test suite (112 tests across all milestones)
+│   └── Khefest.Tests/              # Automated headless test suite (120 tests across all milestones)
 └── docs/                           # In-depth architectural specifications and user guides
 ```
 
@@ -102,6 +103,16 @@ Khefest **owns** the graphics abstraction. Direct3D 11 is strictly an internal W
 * **High-Precision Timing**: Microsecond-accurate `QueryPerformanceCounter` loop delivering `GameTime.DeltaTime` in fractional seconds.
 
 ---
+
+---
+
+### 🔊 High-Performance Native Audio Subsystem
+
+* **Modular Audio Architecture**: Pure platform-independent audio contracts (IAudioDevice, AudioClip, AudioSource, SoundEffect) in Khefest.Audio decoupled from the hardware driver backend.
+* **Direct XAudio 2.9 Integration**: Zero external audio wrapper dependencies; direct native COM interop with xaudio2_9.dll inside Khefest.Windows.
+* **Standard WAV Decoder**: Pure managed RIFF/WAVE container parser (WavParser) supporting 8-bit, 16-bit, 24-bit, 32-bit PCM and IEEE 32-bit float streams.
+* **Complete Playback Control**: Dynamic volume attenuation, logarithmic pitch adjustments (^{\text{pitch}}$ frequency scaling), equal-power stereo panning matrix, pause/resume, and looping.
+* **Headless Testing Support**: Seamless fallback to NullAudioDevice in CI/headless environments with zero audio endpoint failures.
 
 ### 🧩 UI Engine & Plugins
 
@@ -350,3 +361,5 @@ Explore the detailed architecture and implementation guides in [`docs/`](docs):
 
 ## 📄 License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+

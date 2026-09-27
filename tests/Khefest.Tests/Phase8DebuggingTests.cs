@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Khefest.Core.Configuration;
 using Khefest.Core.Errors;
 using Khefest.Core.Profiling;
@@ -116,7 +116,8 @@ public sealed class Phase8DebuggingTests
         Assert.Equal(35, stats.FrameNumber);
         Assert.InRange(stats.FramesPerSecond, 55.0, 65.0);
         Assert.True(stats.FrameTimeMilliseconds > 15.0);
-        Assert.True(stats.ManagedMemoryBytes > 0);
+        var mem = stats.ManagedMemoryBytes;
+        Assert.True(stats.ManagedMemoryBytes > 0, $"Expected ManagedMemoryBytes > 0, but was {mem}. FrameTimeMs was {stats.FrameTimeMilliseconds}");
     }
 
     [Fact]
@@ -216,3 +217,4 @@ public sealed class Phase8DebuggingTests
         Assert.Contains("GC Memory:", report);
     }
 }
+

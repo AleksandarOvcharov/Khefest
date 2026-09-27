@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Khefest.Core\Khefest.Core.csproj" />
     <ProjectReference Include="..\Khefest.Windowing\Khefest.Windowing.csproj" />
     <ProjectReference Include="..\Khefest.Input\Khefest.Input.csproj" />
+    <ProjectReference Include="..\Khefest.Audio\Khefest.Audio.csproj" />
     <ProjectReference Include="..\Khefest.Graphics.LowLevel\Khefest.Graphics.LowLevel.csproj" />
     <ProjectReference Include="..\Khefest.Graphics\Khefest.Graphics.csproj" />
     <ProjectReference Include="..\Khefest.UI\Khefest.UI.csproj" />

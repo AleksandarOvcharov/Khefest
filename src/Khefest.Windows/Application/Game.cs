@@ -1,4 +1,5 @@
-﻿using Khefest.Core.Configuration;
+﻿using Khefest.Audio;
+using Khefest.Core.Configuration;
 using Khefest.Core.Resources;
 using Khefest.Graphics.LowLevel;
 using Khefest.Input;
@@ -16,12 +17,21 @@ public abstract class Game
     public IWindow Window { get; internal set; } = null!;
     public IInputService Input { get; internal set; } = null!;
     public IDisplayService Displays { get; internal set; } = null!;
+    public IAudioDevice Audio { get; internal set; } = null!;
     public KhefestConfig Config { get; internal set; } = null!;
     public ResourceManager Resources { get; internal set; } = null!;
     public IGpuDevice GpuDevice { get; internal set; } = null!;
     public ISwapChain SwapChain { get; internal set; } = null!;
 
     public bool IsRunning { get; internal set; }
+
+    /// <summary>
+    /// Requests the application loop to terminate after the current frame finishes.
+    /// </summary>
+    public void Exit()
+    {
+        IsRunning = false;
+    }
 
     /// <summary>
     /// Invoked once upon application startup.
@@ -48,12 +58,4 @@ public abstract class Game
     /// Invoked upon application exit. Clean up user resources here.
     /// </summary>
     public virtual void Shutdown() { }
-
-    /// <summary>
-    /// Requests the application loop to terminate cleanly.
-    /// </summary>
-    public void Exit()
-    {
-        Window?.RequestClose();
-    }
 }

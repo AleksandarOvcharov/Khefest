@@ -1,10 +1,12 @@
-﻿using Khefest.Core.Configuration;
+﻿using Khefest.Audio;
+using Khefest.Core.Configuration;
 using Khefest.Core.Errors;
 using Khefest.Core.Logging;
 using Khefest.Core.Resources;
 using Khefest.Graphics.LowLevel;
 using Khefest.Graphics.LowLevel.Windows;
 using Khefest.Input;
+using Khefest.Windows.Audio;
 using Khefest.Windows.Display;
 using Khefest.Windows.Timing;
 using Khefest.Windows.Windowing;
@@ -40,10 +42,22 @@ public static class KhefestApp
         var input = new InputManager();
         var displayService = new Win32DisplayService();
 
-        // 3. Create Win32 Window
+        // 3. Initialize Audio Subsystem (fallback to NullAudioDevice if hardware/OS backend is unavailable)
+        IAudioDevice audioDevice;
+        try
+        {
+            audioDevice = new WindowsAudioDevice(resources);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warning("Hardware audio device initialization failed; falling back to NullAudioDevice.", ex);
+            audioDevice = new NullAudioDevice(resources);
+        }
+
+        // 4. Create Win32 Window
         using var window = new Win32Window(config.Window, input);
 
-        // 4. Initialize GPU Device
+        // 5. Initialize GPU Device
         using var gpuDevice = new WindowsGpuDevice(resources);
         ISwapChain? swapChain = null;
 
@@ -65,10 +79,11 @@ public static class KhefestApp
                 }
             };
 
-            // 5. Inject dependencies into Game instance
+            // 6. Inject dependencies into Game instance
             game.Window = window;
             game.Input = input;
             game.Displays = displayService;
+            game.Audio = audioDevice;
             game.Config = config;
             game.Resources = resources;
             game.GpuDevice = gpuDevice;
@@ -77,14 +92,14 @@ public static class KhefestApp
 
             var timer = new Win32Timer();
 
-            // 6. Initialize Game
+            // 7. Initialize Game
             Logger.Info("Initializing application...");
             game.Initialize();
 
             // Display window once initialized
             window.Show();
 
-            // 7. Application Loop
+            // 8. Application Loop
             Logger.Info("Entering application main loop...");
             while (!window.ShouldClose && game.IsRunning)
             {
@@ -144,6 +159,16 @@ public static class KhefestApp
             catch (Exception ex)
             {
                 Logger.Error("Error during game shutdown", ex);
+            }
+
+            // Dispose audio device before leak checking
+            try
+            {
+                audioDevice.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error during audio device disposal", ex);
             }
 
             // Dispose engine-managed SwapChain before leak verification so backbuffers are released

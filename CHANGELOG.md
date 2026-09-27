@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.0] - 2026-09-27
+
+> **Audio Subsystem (Phases 1-3) & Engine Integration Milestone**  
+> Introduced modular audio architecture with platform-independent abstractions in Khefest.Audio and direct native XAudio 2.9 interop in Khefest.Windows. Delivered pure C# RIFF/WAVE decoding, AudioClip and AudioSource resource lifecycle tracking, pitch/pan/volume/looping controls, NullAudioDevice fallback for headless environments, AssetManager integration with WavAssetLoader, and automatic audio subsystem initialization in KhefestApp.Run.
+
+### Added
+- **Khefest.Audio Subsystem**:
+  - IAudioDevice: Primary audio device contract managing master volume, muting state, and resource factories.
+  - AudioClip: Khefest resource representation (ResourceType.Audio) wrapping decoded PCM audio data with deterministic tracking via ResourceManager.
+  - AudioSource: Voice instance controller with state tracking (Stopped, Playing, Paused), volume attenuation, pitch shifting, equal-power stereo panning, and infinite looping.
+  - SoundEffect: High-level convenience helper for fire-and-forget sound playback.
+  - WavParser: Pure managed RIFF/WAVE parser supporting 8/16/24/32-bit PCM and IEEE 32-bit float streams with chunk navigation and word alignment.
+  - WavAssetLoader: Asset pipeline integration (IAssetLoader<AudioClip>) registering .wav files directly into AssetManager.
+  - NullAudioDevice: Mock audio engine for automated CI and headless execution environments.
+- **Khefest.Windows XAudio 2.9 Backend**:
+  - XAudio2Native: Direct unmanaged P/Invoke and COM vtable interop with xaudio2_9.dll (IXAudio2, IXAudio2MasteringVoice, IXAudio2SourceVoice).
+  - WindowsAudioDevice: Native Windows audio implementation with automatic mastering voice lifecycle, pinned PCM memory buffers via GCHandle, and equal-power stereo matrixing.
+  - Lifecycle integration: KhefestApp.Run initializes hardware audio with graceful fallback to NullAudioDevice and exposes Game.Audio.
+- **Automated Validation**:
+  - Added 7 audio tests in AudioSubsystemTests.cs covering WAV parsing, format conversion, clip lifetime tracking, headless playback, full XAudio2 hardware playback/pause/stop/looping, and asset pipeline loading (120 total solution tests passing).
+
+---
+
 ## [1.6.3] - 2026-09-27
 
 > **External Consumer Validation, Documentation Synchronization & Hardening Milestone**  
@@ -374,3 +397,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Diagnostic logging architecture with `LogManager`, `ILogger`, log levels, and pluggable sinks.
   - Fluent `KhefestConfigBuilder` and immutable configuration records.
   - Master `ResourceManager` and abstract `ResourceBase` lifecycle tracker.
+
+

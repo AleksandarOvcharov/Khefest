@@ -1,5 +1,6 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.Linq;
+using Khefest.Audio;
 using Khefest.Core.Configuration;
 using Khefest.Core.Resources;
 using Khefest.Graphics.LowLevel;
@@ -24,10 +25,11 @@ public class ExternalDeveloperValidationTests
         {
             typeof(IGpuDevice).Assembly,         // Khefest.Graphics.LowLevel
             typeof(SpriteBatch).Assembly,        // Khefest.Graphics
-            typeof(InputManager).Assembly        // Khefest.Input
+            typeof(InputManager).Assembly,       // Khefest.Input
+            typeof(IAudioDevice).Assembly        // Khefest.Audio
         };
 
-        var bannedTypeNames = new[] { "ID3D11", "D3D", "SharpDX", "Vortice", "Silk.NET", "HWND", "HRESULT" };
+        var bannedTypeNames = new[] { "ID3D11", "D3D", "SharpDX", "Vortice", "Silk.NET", "HWND", "HRESULT", "IXAudio2", "XAudio2", "WAVEFORMATEX" };
 
         foreach (var assembly in assemblies)
         {
