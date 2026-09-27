@@ -1,6 +1,6 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
-    <Version>1.6.3</Version>
+    <Version>1.7.0</Version>
     <Authors>Aleksandar Ovcharov</Authors>
     <Company>Khefest</Company>
     <Product>Khefest Game Engine</Product>
@@ -18,10 +18,12 @@
     <LangVersion>preview</LangVersion>
     
     <!-- Symbols and Source Link -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>false</IncludeSymbols>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    
+    <!-- Package Output Directory: organized into version folders -->
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts\packages\$(Version)</PackageOutputPath>
     
     <!-- Generate XML documentation file for IntelliSense and NuGet packages -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
